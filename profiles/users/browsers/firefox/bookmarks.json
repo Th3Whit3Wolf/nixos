@@ -1,0 +1,290 @@
+{
+    "guid": "root________",
+    "title": "",
+    "index": 0,
+    "dateAdded": 0,
+    "lastModified": 0,
+    "id": 1,
+    "typeCode": 2,
+    "type": "text/x-moz-place-container",
+    "root": "placesRoot",
+    "children": [
+        {
+            "guid": "menu________",
+            "title": "menu",
+            "index": 0,
+            "dateAdded": 0,
+            "lastModified": 0,
+            "id": 2,
+            "typeCode": 2,
+            "type": "text/x-moz-place-container",
+            "root": "bookmarksMenuFolder"
+        },
+        {
+            "guid": "toolbar_____",
+            "title": "toolbar",
+            "index": 1,
+            "dateAdded": 0,
+            "lastModified": 0,
+            "id": 3,
+            "typeCode": 2,
+            "type": "text/x-moz-place-container",
+            "root": "toolbarFolder",
+            "children": [
+                {
+                    "title": "Programming",
+                    "index": 0,
+                    "dateAdded": 0,
+                    "lastModified": 0,
+                    "id": 7,
+                    "typeCode": 2,
+                    "type": "text/x-moz-place-container",
+                    "children": [
+                        {
+                            "title": "Languages",
+                            "index": 0,
+                            "dateAdded": 0,
+                            "lastModified": 0,
+                            "id": 8,
+                            "typeCode": 2,
+                            "type": "text/x-moz-place-container",
+                            "children": [
+                                {
+                                    "title": "Nix",
+                                    "index": 0,
+                                    "dateAdded": 0,
+                                    "lastModified": 0,
+                                    "id": 10,
+                                    "typeCode": 2,
+                                    "type": "text/x-moz-place-container",
+                                    "children": [
+                                        {
+                                            "title": "Builtins",
+                                            "index": 0,
+                                            "dateAdded": 0,
+                                            "lastModified": 0,
+                                            "id": 15,
+                                            "typeCode": 2,
+                                            "type": "text/x-moz-place-container",
+                                            "children": [
+                                                {
+                                                    "title": "Built-in Constants",
+                                                    "index": 1,
+                                                    "dateAdded": 0,
+                                                    "lastModified": 0,
+                                                    "id": 20,
+                                                    "typeCode": 1,
+                                                    "tags": "Nix,nix,builtins,constants",
+                                                    "type": "text/x-moz-place",
+                                                    "uri": "https://nixos.org/manual/nix/stable/expressions/builtin-constants.html"
+                                                },
+                                                {
+                                                    "title": "Built-in Functions",
+                                                    "index": 2,
+                                                    "dateAdded": 0,
+                                                    "lastModified": 0,
+                                                    "id": 21,
+                                                    "typeCode": 1,
+                                                    "tags": "Nix,nix,builtins",
+                                                    "type": "text/x-moz-place",
+                                                    "uri": "https://nixos.org/manual/nix/stable/expressions/builtins.html"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "title": "Lib",
+                                            "index": 1,
+                                            "dateAdded": 0,
+                                            "lastModified": 0,
+                                            "id": 16,
+                                            "typeCode": 2,
+                                            "type": "text/x-moz-place-container",
+                                            "children": [
+                                                {
+                                                    "title": "Nix Attribute Sets",
+                                                    "index": 1,
+                                                    "dateAdded": 0,
+                                                    "lastModified": 0,
+                                                    "id": 22,
+                                                    "typeCode": 1,
+                                                    "tags": "Nix,nix,lib,attrset,attrsets",
+                                                    "type": "text/x-moz-place",
+                                                    "uri": "https://github.com/NixOS/nixpkgs/blob/master/lib/attrsets.nix"
+                                                },
+                                                {
+                                                    "title": "Nix FileSystem",
+                                                    "index": 3,
+                                                    "dateAdded": 0,
+                                                    "lastModified": 0,
+                                                    "id": 23,
+                                                    "typeCode": 1,
+                                                    "tags": "Nix,nix,lib,filesystem,fs",
+                                                    "type": "text/x-moz-place",
+                                                    "uri": "https://github.com/NixOS/nixpkgs/blob/master/lib/filesystem.nix"
+                                                },
+                                                {
+                                                    "title": "Nix lists",
+                                                    "index": 0,
+                                                    "dateAdded": 0,
+                                                    "lastModified": 0,
+                                                    "id": 24,
+                                                    "typeCode": 1,
+                                                    "tags": "Nix,nix,lib,list",
+                                                    "type": "text/x-moz-place",
+                                                    "uri": "https://github.com/NixOS/nixpkgs/blob/master/lib/lists.nix"
+                                                },
+                                                {
+                                                    "title": "Nix Strings",
+                                                    "index": 2,
+                                                    "dateAdded": 0,
+                                                    "lastModified": 0,
+                                                    "id": 25,
+                                                    "typeCode": 1,
+                                                    "tags": "Nix,nix,lib,strings",
+                                                    "type": "text/x-moz-place",
+                                                    "uri": "https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "title": "Overlays",
+                                            "index": 2,
+                                            "dateAdded": 0,
+                                            "lastModified": 0,
+                                            "id": 17,
+                                            "typeCode": 2,
+                                            "type": "text/x-moz-place-container",
+                                            "children": [
+                                                {
+                                                    "title": "Rust: Pure and reproducible overlay for rust toolchains",
+                                                    "index": 0,
+                                                    "dateAdded": 0,
+                                                    "lastModified": 0,
+                                                    "id": 26,
+                                                    "typeCode": 1,
+                                                    "tags": "Nix,nix,Rust,rs,nix-overlays",
+                                                    "type": "text/x-moz-place",
+                                                    "uri": "https://github.com/oxalica/rust-overlay"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "title": "Search packages",
+                                            "index": 3,
+                                            "dateAdded": 0,
+                                            "lastModified": 0,
+                                            "id": 18,
+                                            "typeCode": 1,
+                                            "tags": "Nix,nix,nixpkgs,packages",
+                                            "type": "text/x-moz-place",
+                                            "uri": "https://search.nixos.org/"
+                                            
+                                        }
+                                    ]
+                                },
+                                {
+                                    "title": "Rust",
+                                    "index": 1,
+                                    "dateAdded": 0,
+                                    "lastModified": 0,
+                                    "id": 11,
+                                    "typeCode": 2,
+                                    "type": "text/x-moz-place-container",
+                                    "children": [
+                                        {
+                                            "title": "crates.io: Rust Package Registry",
+                                            "index": 0,
+                                            "dateAdded": 0,
+                                            "lastModified": 0,
+                                            "id": 19,
+                                            "typeCode": 1,
+                                            "tags": "Rust,rs",
+                                            "type": "text/x-moz-place",
+                                            "uri": "https://crates.io/"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Supra Coders",
+                            "index": 1,
+                            "dateAdded": 0,
+                            "lastModified": 0,
+                            "id": 9,
+                            "typeCode": 2,
+                            "type": "text/x-moz-place-container",
+                            "children": [
+                                {
+                                    "title": "DevSecOps Collaboration Workspace SSO",
+                                    "index": 0,
+                                    "dateAdded": 0,
+                                    "lastModified": 0,
+                                    "id": 12,
+                                    "typeCode": 1,
+                                    "tags": "Supra,Coders,sso",
+                                    "type": "text/x-moz-place",
+                                    "uri": "https://login.dso.mil/auth/realms/baby-yoda/protocol/openid-connect/auth?client_id=account&redirect_uri=https%3A%2F%2Flogin.dso.mil%2Fauth%2Frealms%2Fbaby-yoda%2Faccount%2Flogin-redirect&state=0%2F9f0d1a14-f676-49b7-ae16-72451d4d8415&response_type=code&scope=openid"
+                                },
+                                {
+                                    "title": "Platform One (Mattermost): Chat",
+                                    "index": 1,
+                                    "dateAdded": 0,
+                                    "lastModified": 0,
+                                    "id": 13,
+                                    "typeCode": 1,
+                                    "type": "text/x-moz-place",
+                                    "uri": "https://chat.il2.dso.mil/welcome/channels/town-square"
+                                },
+                                {
+                                    "title": "Zoom weekly meetings",
+                                    "index": 2,
+                                    "dateAdded": 0,
+                                    "lastModified": 0,
+                                    "id": 14,
+                                    "typeCode": 1,
+                                    "tags": "Supra,Coders,zoom,meetings",
+                                    "type": "text/x-moz-place",
+                                    "uri": "https://www.zoomgov.com/postattendee?id=100&mn=U-54pYNc3X1AgBduGAPfP7td0l4y7GLbI2s.A14ggKKiDsXUgsqd"
+                                },
+                                {
+                                    "title": "Platform One (Confluence)",
+                                    "index": 3,
+                                    "dateAdded": 0,
+                                    "lastModified": 0,
+                                    "id": 15,
+                                    "typeCode": 1,
+                                    "tags": "Supra,Coders,confluence",
+                                    "type": "text/x-moz-place",
+                                    "uri": "https://confluence.il2.dso.mil"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "guid": "unfiled_____",
+            "title": "unfiled",
+            "index": 3,
+            "dateAdded": 0,
+            "lastModified": 0,
+            "id": 5,
+            "typeCode": 2,
+            "type": "text/x-moz-place-container",
+            "root": "unfiledBookmarksFolder"
+        },
+        {
+            "guid": "mobile______",
+            "title": "mobile",
+            "index": 4,
+            "dateAdded": 0,
+            "lastModified": 0,
+            "id": 6,
+            "typeCode": 2,
+            "type": "text/x-moz-place-container",
+            "root": "mobileFolder"
+        }
+    ]
+}

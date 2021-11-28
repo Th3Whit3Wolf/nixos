@@ -1,0 +1,5 @@
+{
+    services.eyd = {
+        firefox = true;
+    };
+}
