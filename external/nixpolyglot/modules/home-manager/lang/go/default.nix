@@ -31,6 +31,7 @@ let
 
   langPackages = with pkgs; [
     go
+    go2nix
     gopls
     gofumpt
     go-tools

@@ -64,6 +64,7 @@ let
     cargo-update
     cargo-whatfeatures
     cargo-wipe
+    crate2nix
     #gcc # rust unable to find cc linker if this is not installed
     microserver
     rust-analyzer
