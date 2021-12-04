@@ -2,7 +2,7 @@
   systemd.user.sessionVariables = {
     # Force XDG Compliance
     ACKRC = "$XDG_CONFIG_HOME/ack/ackrc";
-    DCONF_PROFILE = "$XDG_CONFIG_HOME/dconf/user";
+    #DCONF_PROFILE = "$XDG_CONFIG_HOME/dconf/user";
     ELINKS_CONFDIR = "$XDG_CONFIG_HOME/elinks";
     MANPAGER = "sh -c 'col -bx | bat --paging=always -l man -p'";
     PAGER = "less";
@@ -17,7 +17,7 @@
     TERMINFO_DIRS = "$XDG_DATA_HOME/terminfo:/usr/share/terminfo";
     NOTMUCH_CONFIG = "$XDG_CONFIG_HOME/notmuch/config";
     PARALLEL_HOME = "$XDG_CONFIG_HOME/parallel";
-    ICEAUTHORITY = "$XDG_CACHE_HOME/ICEauthority";
+    #ICEAUTHORITY = "$XDG_CACHE_HOME/ICEauthority";
     IMAPFILTER_HOME = "$XDG_CONFIG_HOME/imapfilter";
     INPUTRC = "$XDG_CONFIG_HOME/readline/inputrc";
     SCREENRC = "$XDG_CONFIG_HOME/screen/screenrc";
