@@ -250,7 +250,7 @@ let
   defaultExt = with pkgs.vscode-extensions; [
     pkief.material-icon-theme
     ms-vsliveshare.vsliveshare
-    #ms-azuretools.vscode-docker
+    ms-azuretools.vscode-docker
     #ms-kubernetes-tools.vscode-kubernetes-tools
 
     redhat.vscode-yaml
@@ -355,30 +355,6 @@ in
     };
 
     home = {
-      packages = [ pkgs.nerdfonts ];
-      nix-polyglot.vscode.userSettings = {
-        editor = {
-          fontFamily =
-            "'JetBrainsMono Nerd Font Mono', monospace, 'Droid Sans Fallback'";
-          fontLigatures = true;
-          inlayHints.fontFamily =
-            "'VictorMono Nerd Font Mono', monospace, 'Droid Sans Fallback'";
-        };
-        window.menuBarVisibility = "toggle";
-        workbench = {
-          colorTheme = "Spacemacs - dark";
-          iconTheme = "material-icon-theme";
-        };
-        update = {
-          mode = "none";
-          showReleaseNotes = true;
-        };
-        telemetry = lib.mkIf (vscodePname != "vscodium") {
-          enableTelemetry = false;
-          enableCrashReporter = false;
-        };
-      };
-
       file = {
         "${configFilePath}" = {
           # Force json validation
