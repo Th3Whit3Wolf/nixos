@@ -1,6 +1,20 @@
 { config, pkgs, unstable, ... }: {
+  environment = {
+    noXlibs = true;
+    systemPackages = with pkgs; [
+      konsole
+      kde-gtk-config
+      libsForQt5.kdeconnect-kde
+    ];
+  };
+  programs.kdeconnect.enable = true;
   services = {
     environment.noXlibs = true;
+    environment.systemPackages = with pkgs; [
+      konsole
+      kde-gtk-config
+      libsForQt5.kdeconnect-kde
+    ];
     xserver = {
       enable = true;
       displayManager.sddm = {
