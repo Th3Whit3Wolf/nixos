@@ -8,19 +8,9 @@ let
   vpn = nixProfiles.networking.vpn;
 
   nebula = {
-    nixos = with nixProfiles; defaultHomeSystem ++ [ smart-cards gnome vpn.pia vpn.expressVPN ];
+    nixos = with nixProfiles; defaultHomeSystem ++ [ gnome smart-cards vpn.pia vpn.expressVPN ];
     users = {
-      doc = with userProfiles; [
-        core
-        browsers.firefox
-        #xdg
-        shell.ZSH
-        dev
-        eyd
-        vcs.git
-        ssh
-        ];
-     # doc = with userProfiles; /*defaultHomeUser ++*/  [ /*dev eyd vcs.git*/ ssh ];
+      doc = with userProfiles; defaultHomeUser ++ [ desktop.gnome dev eyd vcs.git ssh ];
     };
   };
 in { inherit nebula; }
