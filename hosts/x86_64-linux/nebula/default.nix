@@ -30,14 +30,18 @@ in {
       inherit persistentPath;
       
       users."doc" = {
-        directories = [ 
+        directories = [
+          ".cache/gsconnect"
+          ".config/gsconnect"
+          ".config/chromium"
+          ".local/bin"
           "Code"
           "Gits"
-          ".local/bin"
           "KVM"
         ];
 
         files = [
+          ".config/zoomus.conf"
         ];
       };
     };
@@ -45,23 +49,20 @@ in {
   environment.systemPackages = with pkgs; [
     fup-repl
     ddcutil
+    openrgb
     neovim
     wget
     firefox-wayland
-    konsole
-    kde-gtk-config
-    #oxygen-gtk
-    vscodium
     vscode
     libappindicator-gtk3
     libdbusmenu
     libsForQt5.libdbusmenu
     libdbusmenu-gtk3
-    nodejs
-    docker
-
-    mesa
+    chromium
+    handbrake
   ];
+
+  programs.noisetorch.enable = true;
 
   harden.kernel.enable = true;
   system = {
@@ -81,12 +82,17 @@ in {
     docker.enable = true;
   };
 
-age.secrets.${passwd} = {
+  age.secrets.${passwd} = {
     file = ./secrets/root.age;
     #path = "/run/agenix/keys/${user}";
-    };
+  };
   users.groups.media = { };
-  users.users = { root = { passwordFile = config.age.secrets.${passwd}.path; }; };
+  users.groups.i2c = { };
+  users.users = { 
+    root = { 
+      passwordFile = config.age.secrets.${passwd}.path; 
+    }; 
+  };
   security.sudo = {
     enable = true;
     wheelNeedsPassword = false;
