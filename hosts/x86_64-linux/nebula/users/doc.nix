@@ -8,6 +8,11 @@ let
       postFixup = old.postFixup + ''
         wrapProgram $out/bin/zoom-us --unset XDG_SESSION_TYPE
       '';});
+    zoom = pkgs.zoom-us.overrideAttrs (old: {
+      postFixup = old.postFixup + ''
+        wrapProgram $out/bin/zoom --unset XDG_SESSION_TYPE
+      '';});
+
 
   passwd = (lib.concatMapStrings (x: x + "/") (lib.sublist 4 3 (lib.splitString "/" (builtins.toString ./.)))) + "secrets/${user}.age";
 
@@ -34,6 +39,8 @@ in {
       "video"
       "media"
       "i2c"
+      (lib.optionalString config.virtualisation.docker.enable "docker")
+      (lib.optionalString config.virtualisation.podman.enable "podman")
     ];
     passwordFile = config.age.secrets.${passwd}.path;
 
@@ -46,24 +53,24 @@ in {
       lazygit
       gitui
       firefox-wayland
-      opensc
-      vscodium
+      
+      #vscodium
       transmission
-      transmission-qt
+      transmission-gtk
+      #transmission-qt
       lollypop
       zellij
       #helix
-      openrgb
+      
 
       #handbrake
       #gnome_mplayer
       mpv
 
-      zoomUsFixed
 
       #anime4kcpp
       #dim
-    ];
+    ] ++ [zoom zoomUsFixed];
   };
 
 
