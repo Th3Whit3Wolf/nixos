@@ -7,7 +7,7 @@ let
       inherit (builtins)
         concatMap elemAt filter map mapAttrs pathExists split attrValues
         attrNames;
-      inherit (inputs) home-manager impermanence ragenix unstable nixpolyglot;
+      inherit (inputs) home-manager impermanence ragenix unstable nixpolyglot fhs-compat;
       inherit (lib) attrByPath forEach setAttrByPath getAttrFromPath;
       inherit (self.lib.importers) rakeLeaves flattenTree;
 
@@ -41,28 +41,6 @@ let
       else
         [];
 
-/*
-      userSecret = user: sysSec: if attrByPath [ "${name}" "users" "${user}" ] { } secrets != {} then 
-        [(attrByPath [ "${name}" "users" "${user}" ] { } secrets) sysSec]
-      else
-        [];
-
-      setSecrets = 
-      let   
-        attr = {};
-        hasSecrets = attrByPath [ "${name}" "system"] { } secrets != {};
-        systemSecret = attrByPath [ "${name}" "system" ] {} secrets;
-        usersWithSecrets = if hasSecrets then filter (u: attrByPath ["${name}" "users" "${u}"] {} secrets != {}) users else [];
-        UserSecrets = initAttr:
-          if hasSecrets then
-            forEach usersWithSecrets (user: 
-              initAttr // (setAttrByPath [ "${user}.age" "publicKeys" ] (userSecret user systemSecret)) 
-            )
-          else 
-          {};
-          secrets = (UserSecrets {});
-        in if secrets != {} then [secrets] else [];
-*/
       allModules = rakeLeaves ../modules;
       
       nixosModules = 
@@ -80,6 +58,7 @@ let
         impermanence.nixosModules.impermanence
         home-manager.nixosModules.home-manager
         ragenix.nixosModules.age
+        fhs-compat.nixosModules.combined
         {
 	        # Set defaults for home-manager
           home-manager.useGlobalPkgs = true;

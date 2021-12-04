@@ -4,33 +4,41 @@
    https://github.com/willruggiano/dotfiles
    https://github.com/ajgrf/dotfiles
 
-   https://learn-2.galvanize.com/cohorts/9ce164f50c49353013
    *
 */
 {
-  # sudo nixos-rebuild --option sandbox false --flake .#Nebula switch
+
   description = "A highly awesome system configuration.";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/release-21.11";
+    nixpkgs.url = "github:nixos/nixpkgs/21.11";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nur.url = "github:nix-community/NUR";
     utils.url = "github:gytis-ivaskevicius/flake-utils-plus/v1.3.0";
     devshell.url = "github:numtide/devshell";
-    nixpolyglot.url = "./external/nixpolyglot";
+    fhs-comapt.url = "github:balsoft/nixos-fhs-compat";
+    impermanence.url ="github:nix-community/impermanence";
 
-    impermanence.url =
-      "github:nix-community/impermanence";
-
+    home-manager = {
+      url = "github:nix-community/home-manager/release-21.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    
     nix-wayland = {
       url = "github:colemickens/nixpkgs-wayland";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.unstableSmall.follows = "unstable";
     };
 
-    home-manager = {
-      url = "github:nix-community/home-manager/release-21.11";
+    rust = {
+      url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nixpolyglot = {
+      url = "./external/nixpolyglot";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.rust.follows = "nixpkgs";
     };
 
     naersk = {
@@ -42,6 +50,8 @@
       url = "github:yaxitech/ragenix";
       inputs.flake-utils.follows = "utils";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.rust-overlay.follows = "rust";
+      inputs.naersk.follows = "naersk";
     };
   };
 
