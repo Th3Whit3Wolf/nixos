@@ -140,7 +140,8 @@ in {
         environment = {
             systemPackages = [] ++ 
                 lib.optional (isNvidiaGpu) [ nvidia-offload ] ++
-                (if (isLaptop || isDesktop) then [ pkgs.ddcutil] else []);
+                (if (isLaptop || isDesktop) then [ pkgs.ddcutil] else []) ++
+                (if (isAmdGpu) then [ pkgs.mesa] else []);
             extraInit = lib.mkIf (isLaptop || isDesktop) "export ZDOTDIR=\"$HOME/.config/zsh\"";
         };
         hardware = {
