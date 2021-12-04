@@ -249,12 +249,12 @@
         "rust": "rust"
       },
       "locked": {
-        "narHash": "sha256-NkzIAnT46FWpm2bZi+f7IlsIvqoU1v+dpZzy/D5/Lw8=",
-        "path": "/nix/store/hl41a2vff45809j8a3p7rrw1gxdnq9gj-source/external/nixpolyglot",
+        "narHash": "sha256-Sdohmxj6LBZLSgtoos8KKEPpKCNl8w5KMw47UcZsgg4=",
+        "path": "/nix/store/wc1mi7npyi64xfw0274zf1091074ma4w-source/external/nixpolyglot",
         "type": "path"
       },
       "original": {
-        "path": "/nix/store/hl41a2vff45809j8a3p7rrw1gxdnq9gj-source/external/nixpolyglot",
+        "path": "/nix/store/wc1mi7npyi64xfw0274zf1091074ma4w-source/external/nixpolyglot",
         "type": "path"
       }
     },
@@ -321,11 +321,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1637720103,
-        "narHash": "sha256-GPpPu1xl/UIWijjHbpRErlK29NfhXDKN5gp9oSfaSzM=",
+        "lastModified": 1638065687,
+        "narHash": "sha256-T8s/mgeS74Qtk48HEnZiQxpleekJP6rFPgkffG7imBc=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "ac8f77587c3dd5d116123713362d7b39ccb8eb90",
+        "rev": "1cd4ebce6b21f9aa38bfa3d5021135ea5568797f",
         "type": "github"
       },
       "original": {
