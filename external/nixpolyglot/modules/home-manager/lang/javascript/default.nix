@@ -16,37 +16,39 @@ let
   ];
 
   langPackages = with pkgs; [
-    nodejs
+    #nodejs
+    nodejs-16_x
+    nodePackages.node2nix
+    yarn2nix
     yarn
-    nodePackages.npm
+    #nodePackages.npm
     deno
-    nodePackages.purescript-language-server
+    #nodePackages.purescript-language-server
     nodePackages.typescript-language-server
     nodePackages.typescript
-    elmPackages.elm-language-server
-    nodePackages.vue-language-server
-    nodePackages.javascript-typescript-langserver
+    #elmPackages.elm-language-server
+    #nodePackages.vue-language-server
+    #nodePackages.javascript-typescript-langserver
     nodePackages.eslint
     nodePackages.prettier
 
     # Task Runners
-    nodePackages.grunt-cli
-    nodePackages.gulp
-    nodePackages.jake
+    #nodePackages.grunt-cli
+    #nodePackages.gulp
+    #nodePackages.jake
 
     # Bundlers
-    nodePackages.webpack
-    nodePackages.browserify
-    nodePackages.rollup
-    nodePackages.parcel-bundler
+    #nodePackages.webpack
+    #nodePackages.browserify
+    #nodePackages.rollup
+    #nodePackages.parcel-bundler
 
     #SWC
 
     # Node Version Manager
-    fnm
+    #fnm
 
-
-    postman
+    #postman
   ];
 
   shellAliases = {
@@ -92,13 +94,13 @@ in
     enable = mkOption {
       type = types.bool;
       default = enabled;
-      description = "Whether to enable nix-polyglot's rust support.";
+      description = "Whether to enable nix-polyglot's ${currLang} support.";
     };
     packages = mkOption {
       type = types.listOf types.package;
       default = langPackages;
       description = ''
-        List of packages to install for rust development.
+        List of packages to install for ${currLang} development.
       '';
     };
     shellAliases = mkOption {
@@ -119,14 +121,19 @@ in
     };
   };
   config = mkIf enabled {
-    xdg.configFile."npm/config".text = ''
-      cache=$XDG_CACHE_HOME/npm
-      prefix=$XDG_DATA_HOME/npm
-      init-module=$XDG_CONFIG_HOME/npm/config/npm-init.js
-    '';
+    home = {
+      packages = config.${pLang}.packages;
+      sessionVariables = config.${pLang}.sessionVariables;
+    };
     programs.zsh = {
       shellAliases = mkIf ifZsh config.${pLang}.shellAliases;
     };
+    xdg.configFile."npm/config".text = ''
+      cache=''${XDG_CACHE_HOME}/npm
+      prefix=''${XDG_DATA_HOME}/npm
+      tmp=''${XDG_RUNTIME_DIR}/npm
+      init-module=''${XDG_CONFIG_HOME}/npm/config/npm-init.js
+    '';
   };
 }
 
