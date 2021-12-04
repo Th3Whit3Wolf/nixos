@@ -96,6 +96,7 @@ let
         "${cache}/lollypop"
         (lib.optionalString (hasPipeWire) "${conf}/pipewire/media-session.d")
         "${conf}/helix"
+        "${data}/backgrounds"
         "${data}/icons"
         "${data}/keyrings"
         "${data}/lollypop"
@@ -130,6 +131,7 @@ let
         (lib.optionalString (vscodePname != null) "${cache}/mesa_shader_cache")
         (lib.optionalString (vscodePname != null) "${home}/.pki")
         (lib.optionalString (vscodePname != null) "${home}/${vscodeExtensionDir}")
+        "${data}/vsliveshare"
 
         # Zsh
         (lib.optionalString (hasZsh ) "${cache}/zsh")
@@ -174,6 +176,7 @@ let
         gpgHomeDir = hm.programs.gpg.gpgHomeDir;
 
     in [
+        
         # GPG
         (lib.optionalString (hasGPG) "${gpgHomeDir}/trustdb.gpg")
         (lib.optionalString (hasGPG) "${gpgHomeDir}/pubring.kbx")
