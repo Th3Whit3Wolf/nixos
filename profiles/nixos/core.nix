@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 let
   normalUser = builtins.attrNames (lib.filterAttrs (n: v: v.isNormalUser) config.users.users);
-  experimental-features = [ "flakes" "nix-command" "ca-references" "recursive-nix" ];
+  experimental-features = [ "flakes" "nix-command"  "recursive-nix" ];
 in {
   environment = {
     etc = {
