@@ -16,7 +16,7 @@
     nur.url = "github:nix-community/NUR";
     utils.url = "github:gytis-ivaskevicius/flake-utils-plus/v1.3.0";
     devshell.url = "github:numtide/devshell";
-    fhs-comapt.url = "github:balsoft/nixos-fhs-compat";
+    fhs-compat.url = "github:balsoft/nixos-fhs-compat";
     impermanence.url ="github:nix-community/impermanence";
 
     home-manager = {
@@ -38,7 +38,7 @@
     nixpolyglot = {
       url = "./external/nixpolyglot";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.rust.follows = "nixpkgs";
+      inputs.rust.follows = "rust";
     };
 
     naersk = {
@@ -84,10 +84,13 @@
           allowUnfree = true;
           #allowBroken = true;
         };
-	overlaysBuilder = channels: [
-    overlays
-    (final: prev: { nix-direnv = prev.nix-direnv.override { enableFlakes = true; }; } )
-    ];
+        overlaysBuilder = channels: [
+          overlays
+          (final: prev: { 
+            nix-direnv = prev.nix-direnv.override { enableFlakes = true; };
+            nix = channels.unstable.nix;
+            })
+        ];
       };
 
       channels.unstable = {
