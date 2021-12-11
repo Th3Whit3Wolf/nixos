@@ -9,7 +9,7 @@
   # Stop creating ~/Downloads!
   "browser.download.dir" = "${downloadDir}";
 
-      "findbar.highlightAll" = true;
+  "findbar.highlightAll" = true;
 
   "browser.download.viewableInternally.typeWasRegistered.svg" = true;
   "browser.download.viewableInternally.typeWasRegistered.webp" = true;
@@ -23,14 +23,12 @@
   "devtools.accessibility.enabled" = false;
   "devtools.cache.disabled" = true;
   "devtools.chrome.enabled" = true;
+
   "devtools.command-button-fission-prefs.enabled" = false;
   "devtools.command-button-measure.enabled" = true;
   "devtools.command-button-rulers.enabled" = true;
   "devtools.command-button-screenshot.enabled" = true;
-  "devtools.debugger.prefs-schema-version" = 11;
-  "devtools.editor.keymap" = "vim";
-  "devtools.inspector.activeSidebar" = "ruleview";
-  "devtools.inspector.three-pane-enabled" = false;
+
   "devtools.memory.enabled" = false;
   /*
   "devtools.netmonitor.columnsData" = builtins.toJSON [
@@ -56,14 +54,22 @@
   "devtools.performance.enabled" = false;
   "devtools.screenshot.clipboard.enabled" = true;
   "devtools.styleeditor.enabled" = false;
+
+  "devtools.inspector.activeSidebar" = "ruleview";
+  "devtools.inspector.three-pane-enabled" = false;
+
   "devtools.theme" = "dark";
-  "devtools.toolbox.host" = "right";
-  "devtools.toolbox.previousHost" = "bottom";
-  "devtools.toolbox.sidebar.width" = 1471;
+  "devtools.toolbox.footer.height" = 353;
+  "devtools.toolbox.host" = "bottom";
+  "devtools.toolbox.previousHost" = "right";
+  "devtools.toolbox.selectedTool" = "application";
+  "devtools.toolbox.sidebar.width" = 756;
   "devtools.toolbox.splitconsoleHeight" = 387;
+
   "devtools.toolsidebar-height.inspector" = 350;
-  "devtools.toolsidebar-width.inspector" = 704;
+  "devtools.toolsidebar-width.inspector" = 317;
   "devtools.toolsidebar-width.inspector.splitsidebar" = 704;
+
   "extensions.webcompat.enable_picture_in_picture_overrides" = true;
   "extensions.webcompat.enable_shims" = true;
   "extensions.webcompat.perform_injections" = true;

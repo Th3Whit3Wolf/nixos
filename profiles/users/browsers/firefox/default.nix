@@ -1,9 +1,12 @@
 { config, lib, pkgs, ... }:
 let 
     inherit (config.home) homeDirectory username;
-    bookmarksPath = ./bookmarks.html;
-    bookmarksJson = ./bookmarks.json;
-    bookmarks = builtins.readFile bookmarksPath;
+    mkBookmarks = import ./mkBookmarks.nix {inherit pkgs;};
+    bookmarks = import ./bookmarks.nix;
+    bookmarksPath = mkBookmarks "firefox_bookmarks.html" bookmarks;
+    #bookmarksPath = ./bookmarks.html;
+    #bookmarksJson = ./bookmarks.json;
+    #bookmarks = builtins.readFile bookmarksPath;
     uiState = {
         placements = {
             widget-overflow-fixed-list = [
@@ -72,11 +75,11 @@ let
         unpaywall
     ];
     settings = (import ./settings.nix { inherit downloadDir; }) // {
-        "browser.bookmarks.file" =   (builtins.toString bookmarksPath);
-        "browser.places.importBookmarksHTML" = false;
-        "browser.tabs.loadBookmarksInBackground" = true;
-        "browser.bookmarks.addedImportButton" = false;
-        "browser.bookmarks.restore_default_bookmarks" = false;
+        "browser.bookmarks.file" = toString bookmarksPath;
+        "browser.places.importBookmarksHTML" = true;
+        #"browser.tabs.loadBookmarksInBackground" = true;
+        #"browser.bookmarks.addedImportButton" = false;
+        #"browser.bookmarks.restore_default_bookmarks" = true;
         "browser.toolbars.bookmarks.visibility" = "always";
         "browser.uiCustomization.state" = (builtins.toJSON uiState);
     };

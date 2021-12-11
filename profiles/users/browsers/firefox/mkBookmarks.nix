@@ -21,9 +21,6 @@ var header = [
 ].join("\n");
 
 var urlfields = [
-  "add_date",
-  "last_visit",
-  "last_modified",
   "icon",
   "image",
   "shortcuturl",
@@ -50,18 +47,17 @@ function makehtml(obj, indent, foldername) {
 
   var s = [];
   if (foldername)
-    s.push(util.format('%s<DT><H3>%s</H3>', pad(indent), foldername));
+    if (foldername === "Bookmarks Toolbar") {
+      s.push(util.format('%s<DT><H3 ADD_DATE="0" LAST_MODIFIED="0" PERSONAL_TOOLBAR_FOLDER="true">%s</H3>', pad(indent), foldername));
+    } else {
+      s.push(util.format('%s<DT><H3 ADD_DATE="0" LAST_MODIFIED="0">%s</H3>', pad(indent), foldername));
+    }
 
   s.push(util.format('%s<DL><p>', pad(indent)));
   // loop the bookmarks
   for (var i in obj) {
     if (typeof obj[i] === 'string') obj[i] = { url: obj[i] };
-    if (obj[i].add_date === undefined ) {
-        obj[i].add_date = 0
-    }
-    if (!obj[i].last_modified === undefined )  {
-        obj[i].last_modified = 0
-    }
+
     var bookmark = obj[i];
 
     // check if we have a directory or a bookmark file
@@ -78,7 +74,7 @@ function makehtml(obj, indent, foldername) {
         if (bookmark[field])
           link += util.format(' %s="%s"', field.toUpperCase(), bookmark[field]);
       }
-      link += util.format('>%s</a>', i);
+      link += util.format(' ADD_DATE="0" LAST_MODIFIED="0">%s</A>', i);
 
       // append the link to the final string
       s.push(util.format('%s<DT>%s', pad(indent + 1), link));
@@ -102,10 +98,10 @@ var json = JSON.parse(fs.readFileSync(process.argv[2], {encoding:'utf8', flag:'r
 
 var html = netscape(json);
 console.log(html);
-    '';
+'';
 
-/*
-generate_bookmarks = name: value: runCommand name {
+
+in name: value: runCommand name {
     nativeBuildInputs = [ parser nodejs];
     buildInputs = [
         nodejs
@@ -115,14 +111,4 @@ generate_bookmarks = name: value: runCommand name {
     passAsFile = [ "value" ];
 } ''
     firefox_bookmark_generator "$valuePath" > $out
-'';
-*/
-in name: value: runCommand name {
-    nativeBuildInputs = [ parser nodejs];
-    buildInputs = [
-        nodejs
-        parser
-    ];
-    value = builtins.toJSON value;
-    passAsFile = [ "value" ];
-}
+''
