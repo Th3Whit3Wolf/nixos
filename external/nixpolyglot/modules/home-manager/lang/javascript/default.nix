@@ -80,12 +80,12 @@ let
   };
 
   langVars = {
-    NPM_CONFIG_USERCONFIG = "$XDG_CONFIG_HOME/npm/config";
-    NPM_CONFIG_CACHE = "$XDG_CACHE_HOME/npm";
+    NPM_CONFIG_USERCONFIG = "${config.xdg.configHome}/npm/config";
+    NPM_CONFIG_CACHE = "${config.xdg.cacheHome}/npm";
     #NPM_CONFIG_TMP = "$XDG_RUNTIME_DIR/npm";
-    NPM_CONFIG_PREFIX = "$XDG_CACHE_HOME/npm";
-    NODE_REPL_HISTORY = "$XDG_CACHE_HOME/node/repl_history";
-    NVM_DIR = "$XDG_DATA_HOME/nvm";
+    NPM_CONFIG_PREFIX = "${config.xdg.cacheHome}/npm";
+    NODE_REPL_HISTORY = "${config.xdg.cacheHome}/node/repl_history";
+    NVM_DIR = "${config.xdg.dataHome}/nvm";
   };
 in
 {
@@ -113,7 +113,7 @@ in
     sessionVariables = mkOption {
       type = types.attrs;
       default = langVars;
-      example = { CCACHE_DIR = "$XDG_CACHE_HOME/ccache"; };
+      example = { CCACHE_DIR = "${config.xdg.cacheHome}/ccache"; };
       description = ''
         Environment variables to always set at login for ${currLang} programming.
         </para><para>

@@ -57,8 +57,8 @@ in
     sessionVariables = mkOption {
       type = types.attrs;
       default = {
-        CCACHE_DIR = "$XDG_CACHE_HOME/ccache";
-        CCACHE_CONFIGPATH = "$XDG_CONFIG_HOME/ccache.config";
+        CCACHE_DIR = "${config.xdg.cacheHome}/ccache";
+        CCACHE_CONFIGPATH = "${config.xdg.configHome}/ccache.config";
       };
       description = ''
         Environment variables to always set at login for ${currLang} programming.
