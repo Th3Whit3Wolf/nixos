@@ -70,7 +70,7 @@ let
         hasZsh = hm.programs.ZSH.enable;
         hasZshInteg = integ: hm.programs.ZSH.integrations.${integ}.enable;
         npg = hm.home.nix-polyglot;
-        lang = lang: lib.attrByPath ["lang" "${lang}" "enable" ] false npg;
+        lang = lang:  builtins.elem "all" npg.langs || builtins.elem lang npg.langs || lib.attrByPath ["lang" "${lang}" "enable" ] false npg;
 
         hasGPG = hasPrg "gpg";
         hasDirEnv = hasPrg "direnv";
@@ -94,6 +94,7 @@ let
         "${cache}/fontconfig"
         "${cache}/gstreamer-1.0"
         "${cache}/lollypop"
+        "${cache}/zoom"
         (lib.optionalString (hasPipeWire) "${conf}/pipewire/media-session.d")
         "${conf}/helix"
         "${data}/backgrounds"
@@ -124,6 +125,8 @@ let
         # Nix Polyglot
         (lib.optionalString (lang "rust") "${data}/cargo")
         (lib.optionalString (lang "rust") "${data}/rustup")
+        #(lib.optionalString true /*(lang "rust")*/ "${data}/cargo")
+        #(lib.optionalString true /*(lang "rust")*/ "${data}/rustup")
         (lib.optionalString (lang "go")   "${data}/go")
 
         # Vscode
