@@ -75,6 +75,9 @@ in {
 
 
   ${user} = { lib, ... }: {
+    imports = [
+      ../desktop/gnome.nix
+    ];
     home = { stateVersion = "21.05"; };
 
     programs = {
