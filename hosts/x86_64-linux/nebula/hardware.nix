@@ -81,6 +81,7 @@ in  {
         enable = true;
       };
     };
+    #supportedFilesystems = [ "ntfs" ];
   };
 
   fileSystems = {
@@ -121,7 +122,7 @@ in  {
     "/media" = {
       device = "/dev/disk/by-uuid/ecd043a6-4e81-4c94-b423-9280e3bb771c";
       fsType = "f2fs";
-      options = fsOptBase ++ f2fsOpt;
+      options = fsOptBase ++ f2fsOpt ++ [ "noexec" ];
       neededForBoot = true;
     };
   };
