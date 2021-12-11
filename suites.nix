@@ -10,7 +10,7 @@ let
   nebula = {
     nixos = with nixProfiles; defaultHomeSystem ++ [ gnome fhs smart-cards vpn.pia vpn.expressVPN ];
     users = {
-      doc = with userProfiles; defaultHomeUser ++ [ desktop.gnome dev eyd vcs.git ssh ];
+      doc = with userProfiles; defaultHomeUser ++ [ dev eyd vcs.git ssh ];
     };
   };
 in { inherit nebula; }
