@@ -60,6 +60,7 @@ in {
     libdbusmenu-gtk3
     chromium
     handbrake
+    nodePackages.live-server
   ];
 
   programs.noisetorch.enable = true;
