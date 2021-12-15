@@ -61,6 +61,7 @@ in {
     chromium
     handbrake
     nodePackages.live-server
+    marktext
   ];
 
   programs.noisetorch.enable = true;
