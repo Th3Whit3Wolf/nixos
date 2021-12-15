@@ -15,11 +15,17 @@
         sessionVariables.LD_LIBRARY_PATH = lib.mkForce "/lib";
         systemPackages = with pkgs; [
             pkg-config
+            stdenv
+            binutils
+            gnumake
             openssl
             openssl.dev
             freetype
             fontconfig
             expat
+            libxml2
+            gperf
+
         ];
 
         extraInit = ''
