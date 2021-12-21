@@ -3,6 +3,13 @@ let
   normalUser = builtins.attrNames (lib.filterAttrs (n: v: v.isNormalUser) config.users.users);
   experimental-features = [ "flakes" "nix-command"  "recursive-nix" ];
 in {
+
+  console = {
+    earlySetup = true;
+    font = "ter-132b";
+    packages = [ pkgs.terminus_font ];
+    keyMap = "us";
+  };
   environment = {
     etc = {
       # Automatic log out from virtual consoles
@@ -56,4 +63,5 @@ in {
     ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq" 
         '';
 }
+
 
