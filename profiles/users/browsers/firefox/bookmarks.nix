@@ -5,6 +5,16 @@
         contents = {
             Programming = {
                 contents = {
+                    "Language Benchmarks" = {
+                        contents = {
+                            "Programming Language and Compiler Benchmarks" = {
+                                url = "https://programming-language-benchmarks.vercel.app/";
+                            };
+                            "The Computer Language Benchmarks Game" = {
+                                url = "https://benchmarksgame-team.pages.debian.net/benchmarksgame/index.html";
+                            };
+                        };
+                    };
                     Languages = {
                         contents = {
                             Nix = {
@@ -96,6 +106,19 @@
                                 url = "https://www.zoomgov.com/j/1602952700";
                                 tags = "Supra,Coders,zoom,meetings";
                             };
+                        };
+                    };
+                };
+                "Projects to keep an eye on" = {
+                    contents = {
+                        "Dim: Media player" = {
+                            url = "https://github.com/Dusk-Labs/dim";
+                        };
+                        "Lapce: text editor" = {
+                            url = "https://github.com/lapce/lapce";
+                        };
+                        "Starlight: javascript engine" = {
+                            url = "https://github.com/Starlight-JS/starlight";
                         };
                     };
                 };
