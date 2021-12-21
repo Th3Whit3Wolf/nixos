@@ -22,7 +22,7 @@ in
       active-view = "month";
       window-maximized = true;
       window-position = mkTuple [ 0 0 ];
-      window-size = mkTuple [ 2560 1408 ];
+      window-size = mkTuple [ 1920 1048 ];
     };
 
     "org/gnome/control-center" = {
@@ -32,7 +32,7 @@ in
     "org/gnome/desktop/background" = {
       color-shading-type = "solid";
       picture-options = "zoom";
-      picture-uri = "file:///persist/home/doc/.local/share/backgrounds/2021-11-28-21-16-06-mountain.jpg";
+      picture-uri = "file:///home/doc/.local/share/backgrounds/F_28-3.jpg";
       primary-color = "#000000000000";
       secondary-color = "#000000000000";
     };
@@ -49,9 +49,18 @@ in
 
     "org/gnome/desktop/interface" = {
       clock-show-weekday = true;
+      enable-animations = true;
       font-antialiasing = "grayscale";
       font-hinting = "slight";
       gtk-im-module = "gtk-im-context-simple";
+    };
+
+    "org/gnome/desktop/notifications" = {
+      application-children = [ "org-gnome-shell-extensions-gsconnect" ];
+    };
+
+    "org/gnome/desktop/notifications/application/org-gnome-shell-extensions-gsconnect" = {
+      application-id = "org.gnome.Shell.Extensions.GSConnect.desktop";
     };
 
     "org/gnome/desktop/peripherals/keyboard" = {
@@ -70,7 +79,7 @@ in
       color-shading-type = "solid";
       lock-delay = "uint32 0";
       picture-options = "zoom";
-      picture-uri = "file:///persist/home/doc/.local/share/backgrounds/2021-11-28-21-20-25-Rob%20Bye.jpg";
+      picture-uri = "file:///home/doc/.local/share/backgrounds/F_28-3.jpg";
       primary-color = "#000000000000";
       secondary-color = "#000000000000";
     };
@@ -96,6 +105,16 @@ in
       workspaces-only-on-primary = true;
     };
 
+    "org/gnome/nautilus/preferences" = {
+      default-folder-viewer = "icon-view";
+      search-filter-time-type = "last_modified";
+    };
+
+    "org/gnome/nautilus/window-state" = {
+      initial-size = mkTuple [ 890 550 ];
+      maximized = false;
+    };
+
     "org/gnome/settings-daemon/plugins/color" = {
       night-light-temperature = "uint32 2700";
     };
@@ -106,15 +125,15 @@ in
 
     "org/gnome/shell" = {
       disable-user-extensions = false;
-      disabled-extensions = [ "bigSur-StatusArea@ordissimo.com" "display-brightness-ddcutil@themightydeity.github.com" "blur-my-shell@aunetx" "native-window-placement@gnome-shell-extensions.gcampax.github.com" ];
-      enabled-extensions = [ "dash-to-dock@micxgx.gmail.com" "gsconnect@andyholmes.github.io" "user-theme@gnome-shell-extensions.gcampax.github.com" ];
+      disabled-extensions = [ "bigSur-StatusArea@ordissimo.com" "native-window-placement@gnome-shell-extensions.gcampax.github.com" "display-brightness-ddcutil@themightydeity.github.com" "blur-my-shell@aunetx" "apps-menu@gnome-shell-extensions.gcampax.github.com" ];
+      enabled-extensions = [ "dash-to-dock@micxgx.gmail.com" "user-theme@gnome-shell-extensions.gcampax.github.com" "gnome-ui-tune@itstime.tech" "just-perfection-desktop@just-perfection" "gsconnect@andyholmes.github.io" ];
       favorite-apps = [ "org.gnome.Calendar.desktop" "org.gnome.Nautilus.desktop" "firefox.desktop" "org.gnome.Lollypop.desktop" "Alacritty.desktop" ];
       welcome-dialog-last-shown-version = "41.1";
     };
 
     "org/gnome/shell/extensions/bigsur-statusarea" = {
       activate-spacing = false;
-      items = "Calendar;1;1;calendar|Light;0;0;light|Night Light;0;0;nightlight|Volume;1;0;volume|Network;1;0;network|Bluetooth;1;0;bluetooth|Power;1;0;power|Notification;1;0;notification|User;1;0;user";
+      items = "'Calendar;1;1;calendar|Light;0;0;light|Night Light;0;0;nightlight|Volume;1;0;volume|Network;1;0;network|Bluetooth;1;0;bluetooth|Power;1;0;power|Notification;1;0;notification|User;1;0;user'";
       separate-date-and-notification = true;
     };
 
@@ -178,7 +197,7 @@ in
       sidebar-width = 157;
       sort-column = "name";
       sort-directories-first = false;
-      sort-order = "ascending";
+      sort-order = "descending";
       type-format = "category";
       window-position = mkTuple [ 26 23 ];
       window-size = mkTuple [ 1231 902 ];
