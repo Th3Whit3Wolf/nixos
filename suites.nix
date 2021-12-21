@@ -15,7 +15,7 @@ let
   };
 
   tardis = {
-    nixos = with nixProfiles; defaultHomeSystem ++ [ gnome fhs smart-cards vpn.pia vpn.expressVPN ];
+    nixos = with nixProfiles; defaultHomeSystem ++ [ gnome /* fhs */ smart-cards vpn.pia vpn.expressVPN ];
     users = {
       doc = with userProfiles; defaultHomeUser ++ [ dev eyd vcs.git ssh ];
     };
