@@ -47,6 +47,12 @@ let
                 doc = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJkTHayoIuYcgRsNeCmKkECGElPEE/WGeSn9oftnatbV";
             };
         };
+        tardis = {
+            system = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMKb+gCXK0YpZ2ywh4B73FmHhZGAVurew3slpRdXHnEf";
+            users = {
+                doc = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDdYWa1JPLi3jbXQoOxg+TOaW/Ug5d0TQcR1zcybQcVy";
+            };
+        };
     };
 
 
@@ -76,7 +82,10 @@ let
         ])
     ));
 
-    vpnUsers = [allSystems.nebula.users.doc];
+    vpnUsers = [
+        allSystems.nebula.users.doc
+        allSystems.tardis.users.doc    
+    ];
 
     vpnFiles = map (x: "secrets/vpn/${x}") [
         "pia.age"

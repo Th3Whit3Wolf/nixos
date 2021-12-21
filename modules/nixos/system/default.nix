@@ -197,6 +197,9 @@ in {
                     ntsdumpdir /var/lib/chrony/nts
                 '';
             };
+            power-profiles-daemon = lib.mkIf isLaptop {
+                enable = false;
+            };
             tlp = lib.mkIf isLaptop {
                 enable = true;
                 settings = {

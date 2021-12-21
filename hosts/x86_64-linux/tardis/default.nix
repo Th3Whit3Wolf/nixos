@@ -62,7 +62,6 @@ in {
     handbrake
     nodePackages.live-server
     marktext
-    ragenix
   ];
 
   programs.noisetorch.enable = true;
@@ -70,12 +69,12 @@ in {
   harden.kernel.enable = true;
   system = {
     enable = true;
-    kind = "desktop";
+    kind = "laptop";
     cpu = "amd";
     gpu = "amd";
   };
   
-  age.identityPaths = [
+  age.sshKeyPaths = [
     "/persist/etc/ssh/ssh_host_ed25519_key"
   ] ++ userSSHKeys;
 
