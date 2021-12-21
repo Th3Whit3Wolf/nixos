@@ -42,7 +42,7 @@ in {
       (lib.optionalString config.virtualisation.podman.enable "podman")
     ];
     passwordFile = config.age.secrets.${passwd}.path;
-
+    #initialPassword = "test";
     packages = with pkgs; [
       git-lfs
       git

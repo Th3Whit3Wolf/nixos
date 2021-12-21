@@ -62,6 +62,9 @@ in {
     handbrake
     nodePackages.live-server
     marktext
+    ragenix
+
+    helix
   ];
 
   programs.noisetorch.enable = true;
@@ -74,7 +77,7 @@ in {
     gpu = "amd";
   };
   
-  age.sshKeyPaths = [
+  age.identityPaths = [
     "/persist/etc/ssh/ssh_host_ed25519_key"
   ] ++ userSSHKeys;
 
@@ -92,7 +95,8 @@ in {
   users.groups.i2c = { };
   users.users = { 
     root = { 
-      passwordFile = config.age.secrets.${passwd}.path; 
+      initialPassword = "test";
+      #passwordFile = config.age.secrets.${passwd}.path; 
     }; 
   };
   security.sudo = {
