@@ -222,11 +222,12 @@ auth-user-pass
     '';
 */
 in {
-            # Go to https://www.expressvpn.com/setup#manual
+        # Go to https://www.expressvpn.com/setup#manual
         # 1) copy the username and password given to you in step 1 and write
-        #    them, each on a new line, in the auth.txt file below.
-        # 2) Download the ZIP file from step 4 and make them available to cert,
-        #    key, tls-auth and ca below.
+        #    them, each on a new line, in the auth.age file below.
+        # 2) Download the ZIP file from step 4 and take the values inside to cert,
+        #    key, tls-auth and ca and then place them inside a auth.age, key.age, 
+        #    tls-auth.age and ca.age secret file resepctively.
     options.networking.vpn.expressVPN = {
         enable = lib.mkEnableOption "Enable ExpressionVPN client configuration";
 
