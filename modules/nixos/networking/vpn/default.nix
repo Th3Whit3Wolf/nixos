@@ -12,7 +12,7 @@ in
     ];
     options = {
         networking.vpn = {
-            enable = lib.mkEnableOption "Erase you darlings";
+            enable = lib.mkEnableOption "Enable VPN modules";
         };
     };
 }
