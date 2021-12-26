@@ -4,7 +4,7 @@
   config = {
     networking = {
       useDHCP = false;
-      interfaces.enp4s0.useDHCP = true;
+      interfaces.wlp1s0.useDHCP = true;
       firewall = {
         enable = true;
         #allowedTCPPorts = [ ];
