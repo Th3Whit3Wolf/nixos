@@ -1,5 +1,5 @@
 { config, options, lib, pkgs, ... }:
-
+with lib;
 let
     cfg         = config.system;
     isAmdCpu    = cfg.cpu == "amd";
@@ -12,97 +12,209 @@ let
     isLaptop    = cfg.kind == "laptop";
     isServer    = cfg.kind == "server"; 
     isSoc       = cfg.kind == "soc";
+    hasUSBMon   = cfg.usbMonitor;
 
-/*
-    interactiveKernel = pkgs.linuxPackagesFor (pkgs.linux_xanmod.override {
-        argsOverride = rec {
-            src = pkgs.fetchFromGitHub {
-            owner = "xanmod";
-            repo = "linux";
-            rev = "5.14.16-xanmod1-cacule";
-            sha256 =
-                "ro7WnN0BPxW/8sajUyGTnvmbemKJEadSBcFmjZ+Wtrs="; # lib.fakeSha256;
+    sysKindEnum            = types.enum [
+            "desktop"
+            "laptop"
+            "server"
+            "soc"
+        ];
+    cpuEnum                = types.enum  [
+            "amd" 
+            "intel"
+        ];
+    gpuEnum                = types.enum  [
+            "amd"
+            "intel"
+            "nvidia"
+        ];
+    laptopManufacturerEnum = types.enum [
+            "asus"
+        ];
+    laptopModelEnum        = types.enum [
+            "ZenBook_UM425IA" 
+            "ZenBook_UX425IA"
+        ];
 
-            };
-            version = "5.14.16";
-            modDirVersion = "5.14.16-xanmod1-cacule";
-        };
-    });
+    isLTModel = models: if cfg.laptopModel != null then any (model: cfg.laptopModel == model) models else false;
 
-    interactiveKernel2111 = pkgs.linuxPackagesFor (pkgs.linuxKernel.kernels.linux_xanmod.override {
-        argsOverride = rec {
-            src = pkgs.fetchFromGitHub {
-            owner = "xanmod";
-            repo = "linux";
-            rev = "5.14.16-xanmod1-cacule";
-            sha256 =
-                "ro7WnN0BPxW/8sajUyGTnvmbemKJEadSBcFmjZ+Wtrs="; # lib.fakeSha256;
+    mkeUdevRule = listOfLists:
+    let 
+        fromListToString = ls:
+            let
+                KEY' = builtins.elemAt ls 0;
+                OP' = builtins.elemAt ls 1;
+                VAL = builtins.elemAt ls 2;
 
-            };
-            version = "5.14.16";
-            modDirVersion = "5.14.16-xanmod1-cacule";
-        };
-    });
-    */
+                KEY =  if hasInfix "{" KEY' then 
+                    let 
+                        splitKEY = splitString "{" KEY'; 
+                        kAttrK = toUpper (builtins.elemAt splitKEY 0);
+                        kAttrV = removeSuffix "}" (builtins.elemAt splitKEY 1);
+                    in
+                        "${kAttrK}{${kAttrV}}"
+                    else toUpper KEY';
 
+                OP = if OP' == "eq" then
+                        "==" 
+                    else if OP' == "neq" then
+                        "!="
+                    else if OP' == "is" then
+                        "="
+                    else if OP' == "inc" then
+                        "+="
+                    else if OP' == "const" then
+                        ":="
+                    else
+                        traceVal OP';
+            in
+                ''${KEY}${OP}"${VAL}"'';
+        assingments = forEach listOfLists (list: fromListToString list);
+    in
+    concatStringsSep ", " assingments;
 
-  nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
-    export __NV_PRIME_RENDER_OFFLOAD=1
-    export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
-    export __GLX_VENDOR_LIBRARY_NAME=nvidia
-    export __VK_LAYER_NV_optimus=NVIDIA_only
-    exec -a "$0" "$@"
-  '';
+    genAction    = act:    ["action"    "eq"  "${if isString act then act else concatStringsSep "|" act }"];    
+    genGroup     = grp:    ["group" "is" grp];
+    genKernel    = krnl:   ["kernel"    "eq"  krnl];
+    genMode      = md:     ["mode"      "is"  "${if isString md then md else builtins.toString md}"];
+    genRun       = run:    ["run"       "inc" run];
+    genSubSystem = subsys: ["subsystem" "eq"  subsys];
+
+    genAttrIS = key: val: ["attr{${key}}" "is" val];
+    genAttrEQ = key: val: ["attr{${key}}" "eq" val];
+    genEnvIS  = key: val: ["env{${key}}"  "is" val];
+    genEnvEQ  = key: val: ["env{${key}}"  "eq" val];
+
+    actionAdd    = genAction "add";
+    actionChange = genAction "change";
+    actionAddOrChange = genAction ["add" "change"];
+
+    groupVideo = genGroup "video";
+
+    mode0664 = genMode "0664";
+    
+    subsystemBacklight = genSubSystem "backlight";
+    subsystemLED       = genSubSystem "led";
+    subsystemI2C       = genSubSystem "i2c-dev";
+    subsystemScsiHost  = genSubSystem "scsi_host";
+
+    genChangeGroup   = grp: grpPath:  genRun "${pkgs.coreutils}/bin/chgrp ${grp} ${grpPath}";
+    genGroupWriteMod = path:          genRun "${pkgs.coreutils}/bin/chmod g+w ${path}";
+    runSh            = cmd:           genRun "${pkgs.bash}/bin/bash -c '${cmd}'";
+
+    genGroupPriv  = subsystem: group: privPath:
+        let
+            SUBSYSTEM = if isString subsystem then genSubSystem subsystem else subsystem;
+            chgrp = mkeUdevRule [ actionAdd SUBSYSTEM (genChangeGroup   group privPath) ];
+            chmod = mkeUdevRule [ actionAdd SUBSYSTEM (genGroupWriteMod       privPath) ];
+        in
+        "${chgrp}\n${chmod}";
+
+    nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
+        export __NV_PRIME_RENDER_OFFLOAD=1
+        export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
+        export __GLX_VENDOR_LIBRARY_NAME=nvidia
+        export __VK_LAYER_NV_optimus=NVIDIA_only
+        exec -a "$0" "$@"
+    '';
 
 in {
     options = {
         system = {
-            enable = lib.mkEnableOption "Enable some low-hanging fruit kernel hardenening.";
-            kind = lib.mkOption {
-                type = lib.types.enum ["desktop" "laptop" "server" "soc" false];
-                default = false;
+            enable = mkEnableOption "Enable some low-hanging fruit kernel hardenening.";
+            kind = mkOption {
+                type = types.nullOr sysKindEnum;
+                default = null;
                 example = "desktop";
                 description = "What kind of system is this?";
             };
-            cpu = lib.mkOption {
-                type = lib.types.enum ["amd" "intel" false];
-                default = false;
+            laptopManufacturer = mkOption {
+                type = types.nullOr laptopManufacturerEnum;
+                default = null;
+                example = "asus";
+                description = ''
+                    Who manufactured your laptop?
+
+                    If unsure run `nix-shell -p dmidecode --run 'sudo dmidecode | grep Manufacturer | head -n1'`
+                '';
+            };
+            laptopModel = mkOption {
+                type = types.nullOr laptopModelEnum;
+                default = null;
+                example = "ZenBook_UM425IA";
+                description = ''
+                    What model is your laptop?
+
+                    If unsure run `nix-shell -p dmidecode --run 'sudo dmidecode | grep "Product Name:"'`
+                '';
+            };
+            cpu = mkOption {
+                type = types.nullOr cpuEnum;
+                default = null;
                 example = "amd";
                 description = "What brand is the cpu?";
             };
-            gpu = lib.mkOption {
-                type = lib.types.enum ["amd" "intel" "nvidia" false];
-                default = false;
+            gpu = mkOption {
+                type = types.nullOr gpuEnum;
+                default = null;
                 example = "amd";
                 description = "What brand is the gpu?";
             };
-            ssdBoot = lib.mkOption {
-                type = lib.types.bool;
+            ssdBoot = mkOption {
+                type = types.bool;
                 default = false;
                 example = true;
                 description = "What brand is the gpu?";
             };
+            usbMonitor = mkOption {
+                type = types.bool;
+                default = false;
+                example = true;
+                description = "Does this device use a USB-C monitor?";
+            };
+            backlightName = mkOption {
+                type = types.nullOr types.string;
+                default = null;
+                example = "amdgpu_bl0";
+                description = "Name of backlight to give video group access to";
+            };
+            keyboardName = mkOption {
+                type = types.nullOr types.string;
+                #type = types.nullOr (types.either (types.listOf types.string) types.string);
+                default = null;
+                example = "asus::kbd_backlight";
+                description = "Name of led to give video group access to";
+            };
+            externMonitorName = mkOption {
+                type = types.nullOr types.string;
+                #type = types.nullOr (types.either (types.listOf types.string) types.string);
+                default = null;
+                example = "i2c12";
+                description = "Name of i2c device to give video group access to";
+            };
         };
     };
-    config = lib.mkIf (cfg.enable) {
+
+    config = mkIf (cfg.enable) {
         boot = {
-            extraModulePackages = lib.mkIf (isLaptop) (with config.boot.kernelPackages; [ acpi_call ]);
-            extraModprobeConfig = lib.mkIf ((isAmdCpu || isIntelCpu) && virtEnabled)  ''
+            extraModulePackages = mkIf (isLaptop) (with config.boot.kernelPackages; [ acpi_call ]);
+            extraModprobeConfig = mkIf ((isAmdCpu || isIntelCpu) && virtEnabled)  ''
                 options kvm_${if isAmdCpu then "amd" else "intel"} nested=1
                 options kvm_${if isAmdCpu then "amd" else "intel"} emulate_invalid_guest_state=0
                 options kvm ignore_msrs=1
             '';
-            kernelPackages = lib.mkIf (isDesktop || isLaptop) pkgs.linuxKernel.packages.linux_xanmod; # interactiveKernel2111;
+            kernelPackages = mkIf (isDesktop || isLaptop) pkgs.linuxKernel.packages.linux_xanmod; 
             
             kernelModules = [
-                (lib.optionalString (isAmdCpu   && virtEnabled) "kvm-amd")
-                (lib.optionalString (isIntelCpu && virtEnabled) "kvm-intel" )
-                (lib.optionalString (isAmdGpu) "amdgpu")
-                (lib.optionalString (isDesktop || isLaptop) "i2c-dev")
-                (lib.optionalString (isLaptop) "acpi_call")
+                (optionalString (isAmdCpu   && virtEnabled) "kvm-amd")
+                (optionalString (isIntelCpu && virtEnabled) "kvm-intel" )
+                (optionalString (isAmdGpu) "amdgpu")
+                (optionalString (isDesktop || isLaptop) "i2c-dev")
+                (optionalString (isLaptop) "acpi_call")
             ];
 
-            kernel.sysctl = lib.mkIf cfg.ssdBoot {
+            kernel.sysctl = mkIf cfg.ssdBoot {
                 # * Increase system responsiveness
                 # The swappiness sysctl parameter represents the kernel's preference (or avoidance) of swap space. Swappiness can have a value between 0 and 100, the default value is 60.
                 # A low value causes the kernel to avoid swapping, a higher value causes the kernel to try to use swap space. Using a low value on sufficient memory is known to improve responsiveness on many systems.
@@ -139,16 +251,16 @@ in {
         };
         environment = {
             systemPackages = [] ++ 
-                lib.optional (isNvidiaGpu) [ nvidia-offload ] ++
+                optional (isNvidiaGpu) [ nvidia-offload ] ++
                 (if (isLaptop || isDesktop) then [ pkgs.ddcutil] else []) ++
                 (if (isAmdGpu) then [ pkgs.mesa] else []);
-            extraInit = lib.mkIf (isLaptop || isDesktop) "export ZDOTDIR=\"$HOME/.config/zsh\"";
+            extraInit = mkIf (isLaptop || isDesktop) "export ZDOTDIR=\"$HOME/.config/zsh\"";
         };
         hardware = {
             enableRedistributableFirmware = (isAmdCpu || isIntelCpu || isNvidiaGpu);
             cpu = {
-                amd.updateMicrocode = lib.mkIf   (isAmdCpu  ) true;
-                intel.updateMicrocode = lib.mkIf (isIntelCpu) true;
+                amd.updateMicrocode = mkIf   (isAmdCpu  ) true;
+                intel.updateMicrocode = mkIf (isIntelCpu) true;
             };
             opengl = {
                 extraPackages = 
@@ -158,18 +270,21 @@ in {
                         with pkgs; [ intel-compute-runtime vaapiIntel vaapiVdpau libvdpau-va-gl ]
                     else
                         [];
-         
-                extraPackages32 = lib.mkIf (isIntelCpu) (with pkgs.pkgsi686Linux; [ vaapiIntel ]);
+
+                extraPackages32 = mkIf (isIntelCpu) (with pkgs.pkgsi686Linux; [ vaapiIntel ]);
                 # Vulkan
                 driSupport = true;
                 driSupport32Bit = true;
             };
+            i2c = mkIf (isLTModel ["ZenBook_UM425IA" "ZenBook_UX425IA"]) {
+                enable = true;
+            };
         };
         
         services = {
-            timesyncd.enable = lib.mkIf isLaptop false;
-            ntp.enable = lib.mkIf isLaptop false;
-            chrony = lib.mkIf isLaptop {
+            timesyncd.enable = mkIf isLaptop false;
+            ntp.enable = mkIf isLaptop false;
+            chrony = mkIf isLaptop {
                 enable = true;
                 servers = [
                     "0.uk.pool.ntp.org"
@@ -191,16 +306,16 @@ in {
                     pool nixos.pool.ntp.org iburst
                     pool pool.ntp.org iburst
                     pool amazon.pool.ntp.org iburst
-                    initstepslew ${toString config.services.chrony.initstepslew.threshold} ${lib.concatStringsSep " " config.networking.timeServers}
+                    initstepslew ${toString config.services.chrony.initstepslew.threshold} ${concatStringsSep " " config.networking.timeServers}
                     # Enable kernel synchronization of the real-time clock (RTC).
                     rtcsync
                     ntsdumpdir /var/lib/chrony/nts
                 '';
             };
-            power-profiles-daemon = lib.mkIf isLaptop {
+            power-profiles-daemon = mkIf isLaptop {
                 enable = false;
             };
-            tlp = lib.mkIf isLaptop {
+            tlp = mkIf isLaptop {
                 enable = true;
                 settings = {
                     "SOUND_POWER_SAVE_ON_AC" = 0;
@@ -239,37 +354,101 @@ in {
                     "USB_AUTOSUSPEND" = 1;
                 };
             };
-            xserver =  lib.mkIf config.services.xserver.enable {
-                videoDrivers = lib.mkIf (isAmdGpu || isNvidiaGpu || isIntelGpu) [
-                    (lib.optionalString (isAmdGpu) "amdgpu")
-                    (lib.optionalString (isNvidiaGpu) "nvidia")
-                    (lib.optionalString (isIntelGpu) "modesetting")
+            xserver =  mkIf config.services.xserver.enable {
+                videoDrivers = mkIf (isAmdGpu || isNvidiaGpu || isIntelGpu || hasUSBMon) [
+                    (optionalString (isAmdGpu) "amdgpu")
+                    (optionalString (isNvidiaGpu) "nvidia")
+                    (optionalString (isIntelGpu) "modesetting")
+                    (optionalString (hasUSBMon) "displaylink")
                 ];
-                useGlamor = lib.mkIf isIntelGpu true;
-                libinput.enable = lib.mkIf isLaptop true;
+                useGlamor = mkIf isIntelGpu true;
+                libinput.enable = mkIf isLaptop true;
             };
             udev = {
                 extraRules =''
-                    ${lib.optionalString (isLaptop) ''
+                    # Set Scheduler for NVMe
+                    ${mkeUdevRule [ actionAddOrChange (genKernel "nvme[0-9]n[0-9]") (genAttrIS "queue/scheduler" "none")]}
+                    # Set Scheduler for SSD and eMMC
+                    ${mkeUdevRule [ actionAddOrChange (genKernel "sd[a-z]|mmcblk[0-9]*") (genAttrEQ "queue/rotational" "0") (genAttrIS "queue/scheduler" "mq-deadline")]}
+                    # Set Scheduler for rotating disks
+                    ${mkeUdevRule [ actionAddOrChange (genKernel "sd[a-z]") (genAttrEQ "queue/rotational" "1") (genAttrIS "queue/scheduler" "bfq")]}
+                    
+                    ${optionalString (isLaptop) ''
                     # Save Power
-                    ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="med_power_with_dipm"
-
-                    # Allow members of video to change laptop monitor  brightness
-                    ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/backlight/%k/brightness"
-                    ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/backlight/%k/brightness"
+                    ${mkeUdevRule [ actionAdd subsystemScsiHost (genKernel "hosts*") (genAttrIS "link_power_management_policy" "med_power_with_dipm")]}
                     ''}
-                    ${lib.optionalString (isLaptop || isDesktop) ''
-                    # Allow members of input change keyboar brightness
-                    ACTION=="add", SUBSYSTEM=="leds", RUN+="${pkgs.coreutils}/bin/chgrp input /sys/class/leds/%k/brightness"
-                    ACTION=="add", SUBSYSTEM=="leds", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/leds/%k/brightness"
+                    ${optionalString (cfg.backlightName != null) ''
+                    # Allow members of video to change laptop monitor brightness
+                    ${genGroupPriv subsystemBacklight "video" "/sys/class/backlight/${cfg.backlightName}/brightness" }
 
-                    # Allow members of i2c to change external monitor  brightness
-                    KERNEL=="i2c-[0-9]*", GROUP="i2c", MODE="0660"
+                    # This used to work but no longer does, not sure when and why this happened
+                    # ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="${cfg.backlightName}", GROUP="video", MODE="0664"
+
+                    # UNSAFE allow ALL members of video group full access to ALL backlight devices
+                    # ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/backlight/%k/brightness"
+                    # ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/backlight/%k/brightness"
                     ''}
+                    ${optionalString (cfg.keyboardName != null) ''
+                    # Allow members of video to change led (keyboard) brightness
+                    ${genGroupPriv subsystemLED "video" "/sys/class/leds/${cfg.keyboardName}/brightness" }
+
+                    # This used to work but no longer does, not sure when and why this happened
+                    # ACTION=="add", SUBSYSTEM=="leds", KERNEL=="${cfg.keyboardName}", GROUP="video", MODE="0664"
+
+                    # UNSAFE allow ALL members of video group full access to ALL led devices
+                    # ACTION=="add", SUBSYSTEM=="leds", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/leds/%k/brightness"
+                    # ACTION=="add", SUBSYSTEM=="leds", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/leds/%k/brightness"
+                    ''}
+                    ${optionalString (cfg.externMonitorName != null) ''
+                    # Allow members of video to change i2c device (external monitor) brightness
+                    ${mkeUdevRule [ (genKernel cfg.externMonitorName) subsystemI2C groupVideo mode0664]}
+
+                    # UNSAFE allow ALL members of i2c group full access to ALL i2c devices
+                    # KERNEL=="i2c-[0-9]*", GROUP="i2c", MODE="0660"
+                    ''}
+
+                    ${optionalString (isLTModel ["ZenBook_UM425IA" "ZenBook_UX425IA"]) ''
+                    # Should stop charging after 60% battery
+                    ${mkeUdevRule [ actionAdd (genKernel "asus-nb-wmi") (runSh "echo 60 > /sys/class/power_supply/BAT?/charge_control_end_threshold")]}
+                    ''}
+
                 '';
             };
         };
-        zramSwap = lib.mkIf (isDesktop || isLaptop) {
+
+        systemd.services = {
+
+            asus-touchpad-numpad = mkIf (isLTModel ["ZenBook_UM425IA" "ZenBook_UX425IA"]) {
+                description = "Asus Touchpad to Numpad Handler";
+                documentation = ["https://github.com/mohamed-badaoui/asus-touchpad-numpad-driver"];
+                path = [ pkgs.i2c-tools ];
+                script = ''
+                    cd ${pkgs.fetchFromGitHub {
+                    owner = "mohamed-badaoui";
+                    repo = "asus-touchpad-numpad-driver";
+                    # These needs to be updated from time to time
+                    rev = "d80980af6ef776ee6acf42c193689f207caa7968";
+                    sha256 = "sha256-JM2wrHqJTqCIOhD/yvfbjLZEqdPRRbENv+N9uQHiipc=";
+                    }}
+                    # In the last argument here you choose your layout.
+                    ${pkgs.python3.withPackages(ps: [ ps.libevdev ])}/bin/python asus_touchpad.py ux433fa
+                '';
+                # Probably needed because it fails on boot seemingly because the driver
+                # is not ready yet. Alternatively, you can use `sleep 3` or similar in the
+                # `script`.
+                serviceConfig = {
+                    StandardInput = "tty-force";
+                    StandardOutput = "/var/log/asus_touchpad_numpad-driver/error.log";
+                    StandardError = "/var/log/asus_touchpad_numpad-driver/error.log";
+                    TimeoutSec = 5;
+                    RestartSec = "2s";
+                    Restart = "on-failure";
+                };
+                wantedBy = [ "multi-userdefault.target" ];
+            };
+        };
+
+        zramSwap = mkIf (isDesktop || isLaptop) {
             enable = true;
             algorithm = "zstd";
         };
