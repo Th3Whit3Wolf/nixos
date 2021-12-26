@@ -4,6 +4,10 @@ let
   user = "doc";
   homey = config.home-manager.users.${user}.home.homeDirectory;
 
+  isWayland = config.programs.sway.enable ||
+    config.services.xserver.desktopManager.gnome.enable ||
+    config.services.xserver.desktopManager.plasma5.enable;
+
   zoomUsFixed = pkgs.zoom-us.overrideAttrs (old: {
       postFixup = old.postFixup + ''
         wrapProgram $out/bin/zoom-us --unset XDG_SESSION_TYPE
@@ -77,7 +81,20 @@ in {
     imports = [
       ../desktop/gnome.nix
     ];
-    home = { stateVersion = "21.05"; };
+    home = {
+      stateVersion = "21.05"; 
+      nix-polyglot = {
+        enable = true;
+        vscode = {
+          enable = true;
+          userSettings = {
+            window.titleBarStyle = "native";
+          };
+        };
+      };
+    };
+
+    
 
     programs = {
       git = {
@@ -90,6 +107,7 @@ in {
       eyd = {
         enable = true;
         persistentPath = "/persist";
+        chromium = true;
       };
     };
 
@@ -115,7 +133,26 @@ in {
           XDG_GIT_HOME = "/home/doc/Gits";
           XDG_BIN_HOME = "/home/doc/.local/bin";
         };
-      };
+      };  
+      configFile = {
+        "electron-flags.conf" = lib.mkIf isWayland {
+          text = ''
+--enable-features=UseOzonePlatform
+--ozone-platform=wayland
+          '';
+        };
+        "chromium-flags.conf " = lib.mkIf isWayland {
+          text = ''
+--ignore-gpu-blocklist
+--enable-gpu-rasterization
+--enable-zero-copy
+--enable-features=UseOzonePlatform
+--ozone-platform=wayland
+'';
+        };
+      };    
     };
+
+
   };
 }
