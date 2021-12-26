@@ -15,10 +15,7 @@ in {
   time.timeZone = "Europe/London";
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
-  console = {
-    font = "Lat2-Terminus16";
-    keyMap = "us";
-  };
+
 
   # Enable sound.
   sound.enable = true;
@@ -33,7 +30,6 @@ in {
         directories = [
           ".cache/gsconnect"
           ".config/gsconnect"
-          ".config/chromium"
           ".local/bin"
           "Code"
           "Gits"
@@ -58,7 +54,7 @@ in {
     libdbusmenu
     libsForQt5.libdbusmenu
     libdbusmenu-gtk3
-    chromium
+    #chromium
     handbrake
     nodePackages.live-server
     marktext
@@ -67,6 +63,7 @@ in {
     helix
   ];
 
+  prg.chromium.enable = true;  
   programs.noisetorch.enable = true;
 
   harden.kernel.enable = true;
@@ -75,6 +72,11 @@ in {
     kind = "laptop";
     cpu = "amd";
     gpu = "amd";
+    ssdBoot = true;
+    backlightName = "amdgpu_bl0";
+    keyboardName = "asus::kbd_backlight";
+    #externMonitorName = "12c12";
+    #usbMonitor = true;
   };
   
   age.identityPaths = [
