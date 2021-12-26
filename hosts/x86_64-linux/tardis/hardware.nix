@@ -38,14 +38,14 @@ in  {
           allowDiscards = true;
           #reusePassphrases = true;
         };
-
       };
     };
 
     kernelParams = [
-      # Give interactive shell option on boot faile
+      # Give interactive shell option on boot fail
       "boot.shell_on_fail"
-      
+      # Allows backlight save/load systemd service work
+      "acpi_backlight=none"
     ];
     kernel.sysctl = {
       "net.core.default_qdisc" = "fq_pie";
@@ -58,7 +58,7 @@ in  {
         enable = true;
       };
     };
-    #supportedFilesystems = [ "ntfs" ];
+    supportedFilesystems = [ "f2fs" ];
   };
 
   fileSystems = {
