@@ -26,13 +26,13 @@ in
     };
 
     "org/gnome/control-center" = {
-      last-panel = "background";
+      last-panel = "keyboard";
     };
 
     "org/gnome/desktop/background" = {
       color-shading-type = "solid";
       picture-options = "zoom";
-      picture-uri = "file:///home/doc/.local/share/backgrounds/F_28-3.jpg";
+      picture-uri = "file:///persist/home/doc/.local/share/backgrounds/F_28-3.jpg";
       primary-color = "#000000000000";
       secondary-color = "#000000000000";
     };
@@ -53,10 +53,15 @@ in
       font-antialiasing = "grayscale";
       font-hinting = "slight";
       gtk-im-module = "gtk-im-context-simple";
+      locate-pointer = true;
     };
 
     "org/gnome/desktop/notifications" = {
       application-children = [ "org-gnome-shell-extensions-gsconnect" ];
+    };
+
+    "org/gnome/desktop/notifications/application/gnome-power-panel" = {
+      application-id = "gnome-power-panel.desktop";
     };
 
     "org/gnome/desktop/notifications/application/org-gnome-shell-extensions-gsconnect" = {
@@ -72,6 +77,8 @@ in
     };
 
     "org/gnome/desktop/peripherals/touchpad" = {
+      click-method = "areas";
+      disable-while-typing = true;
       two-finger-scrolling-enabled = true;
     };
 
@@ -79,7 +86,7 @@ in
       color-shading-type = "solid";
       lock-delay = "uint32 0";
       picture-options = "zoom";
-      picture-uri = "file:///home/doc/.local/share/backgrounds/F_28-3.jpg";
+      picture-uri = "file:///persist/home/doc/.local/share/backgrounds/F_28-3.jpg";
       primary-color = "#000000000000";
       secondary-color = "#000000000000";
     };
@@ -90,6 +97,26 @@ in
 
     "org/gnome/desktop/session" = {
       idle-delay = "uint32 300";
+    };
+
+    "org/gnome/desktop/wm/keybindings" = {
+      close = [ "<Super>q" ];
+      move-to-monitor-left = [];
+      move-to-monitor-right = [];
+      move-to-workspace-1 = [ "<Shift><Super>exclam" ];
+      move-to-workspace-2 = [ "<Shift><Super>at" ];
+      move-to-workspace-3 = [ "<Shift><Super>numbersign" ];
+      move-to-workspace-4 = [ "<Shift><Super>dollar" ];
+      switch-applications = [];
+      switch-applications-backward = [];
+      switch-to-workspace-1 = [ "<Super>1" ];
+      switch-to-workspace-2 = [ "<Super>2" ];
+      switch-to-workspace-3 = [ "<Super>3" ];
+      switch-to-workspace-4 = [ "<Super>4" ];
+      switch-to-workspace-left = [ "<Shift><Super>Left" ];
+      switch-to-workspace-right = [ "<Shift><Super>Right" ];
+      switch-windows = [ "<Shift><Super>Tab" ];
+      switch-windows-backward = [ "<Super>Tab" ];
     };
 
     "org/gnome/evolution-data-server" = {
@@ -119,7 +146,25 @@ in
       night-light-temperature = "uint32 2700";
     };
 
+    "org/gnome/settings-daemon/plugins/media-keys" = {
+      custom-keybindings = [ "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/" "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/" ];
+      www = [ "<Super>w" ];
+    };
+
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+      binding = "<Super>Return";
+      command = "gnome-terminal";
+      name = "Open Terminal";
+    };
+
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
+      binding = "<Super>c";
+      command = "vscode";
+      name = "Open editor";
+    };
+
     "org/gnome/settings-daemon/plugins/power" = {
+      idle-dim = true;
       sleep-inactive-ac-type = "nothing";
     };
 
@@ -128,6 +173,7 @@ in
       disabled-extensions = [ "bigSur-StatusArea@ordissimo.com" "native-window-placement@gnome-shell-extensions.gcampax.github.com" "display-brightness-ddcutil@themightydeity.github.com" "blur-my-shell@aunetx" "apps-menu@gnome-shell-extensions.gcampax.github.com" ];
       enabled-extensions = [ "dash-to-dock@micxgx.gmail.com" "user-theme@gnome-shell-extensions.gcampax.github.com" "gnome-ui-tune@itstime.tech" "just-perfection-desktop@just-perfection" "gsconnect@andyholmes.github.io" ];
       favorite-apps = [ "org.gnome.Calendar.desktop" "org.gnome.Nautilus.desktop" "firefox.desktop" "org.gnome.Lollypop.desktop" "Alacritty.desktop" ];
+      had-bluetooth-devices-setup = true;
       welcome-dialog-last-shown-version = "41.1";
     };
 
@@ -171,13 +217,20 @@ in
 
     "org/gnome/shell/extensions/gsconnect" = {
       id = "f02b50ed-8d4d-4345-997b-3b2be5ade6b1";
-      name = "nebula";
+      name = "tardis";
       show-indicators = false;
     };
 
     "org/gnome/shell/extensions/gsconnect/preferences" = {
       window-maximized = false;
       window-size = mkTuple [ 640 440 ];
+    };
+
+    "org/gnome/shell/keybindings" = {
+      switch-to-application-1 = [];
+      switch-to-application-2 = [];
+      switch-to-application-3 = [];
+      switch-to-application-4 = [];
     };
 
     "org/gnome/shell/world-clocks" = {
