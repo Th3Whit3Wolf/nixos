@@ -27,7 +27,6 @@ in  {
         "usbhid"
         "sd_mod"
         "rtsx_pci_sdmmc"
-        "asus-nb-wmi"
         "i2c-dev"
         "i2c-piix4"
       ];
