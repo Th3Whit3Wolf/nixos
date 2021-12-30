@@ -43,10 +43,18 @@ let
             "ZenBook_UX425IA"
         ];
     laptopManufacturerEnum = types.enum [
+            "acer"
+            "apple"
             "asus"
             "lenovo"
         ];
     laptopModelEnum        = types.enum [
+            # Acer
+            "Aspire_4810t"
+
+            # Apple
+            "MacBook_Air6"
+
             # Asus
             "ZenBook_UM425IA" 
             "ZenBook_UX425IA"
@@ -57,6 +65,9 @@ let
             # Lenovo
             "Thinkpad_t440s"
             "Thinkpad_t440p"
+            "Thinkpad_x230"
+            "Thinkpad_x13"
+            "Old_Thinkpad" # https://www.thinkwiki.org/wiki/Tp_smapi#Model-specific_status
         ];
 
     # This only works if there are no motherboard models with the same name
@@ -305,15 +316,19 @@ in {
 
                 # For GPUs
                 (optionalString (isAmdGpu) "amdgpu")
+                (optionalString (isIntelCpu) "i915")
 
                 # For special motherboards
                 (optionalMultiString (hasMobo "supermicro") supermicroKernelModules)
 
                 # For laptops
                 (optionalString (isLaptop) "acpi_call")
+                (optionalString (hasLaptop "Aspire_4810t") "ata_piix")
+                (optionalString (hasLaptop "MacBook_Air6") "mba6x_bl")
                 (optionalString (hasLaptop "asus") "asus-nb-wmi")
-                (optionalString (hasLaptop ["Thinkpad_t440s" "Thinkpad_t440p"] ) "tpm-rng")
-
+                (optionalString (hasLaptop ["Thinkpad_t440s" "Thinkpad_t440p" "Thinkpad_x230"] ) "tpm-rng")
+                (optionalString (hasLaptop "Old_Thinkpad") "tp_smapi" )
+                (optionalString (hasLaptop "Thinkpad_x13") "psmouse" )
                 # Needed for using ddcutils on external monitor
                 (optionalMultiString hasExtMon ["i2c-dev" "i2c-piix4"] )
             ];
