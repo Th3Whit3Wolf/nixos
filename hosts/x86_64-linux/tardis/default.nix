@@ -76,7 +76,10 @@ in {
     backlightName = "amdgpu_bl0";
     keyboardName = "asus::kbd_backlight";
     #externMonitorName = "12c12";
-    #usbMonitor = true;
+    usbMonitor = true;
+    laptopManufacturer = "asus";
+    laptopModel = "ZenBook_UM425IA";
+    laptopBatteryChargeThreshold = 60;
   };
   
   age.identityPaths = [
