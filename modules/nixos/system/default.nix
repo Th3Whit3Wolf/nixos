@@ -37,7 +37,18 @@ let
             "ZenBook_UX425IA"
         ];
 
+    isLTManuf = models: if cfg.laptopManufacturer != null then any (model: cfg.laptopManufacturer == model) models else false;
     isLTModel = models: if cfg.laptopModel != null then any (model: cfg.laptopModel == model) models else false;
+
+    laptopBatteryChargeThresholdUdev =
+        if (cfg.laptopBatteryChargeThreshold > 0 && cfg.laptopBatteryChargeThreshold < 100) then
+            if (cfg.laptopModel == "asus" ) then 
+                ''
+                # Should stop charging after ${cfg.laptopBatteryChargeThreshold}% battery
+                ${mkeUdevRule [ actionAdd (genKernel "asus-nb-wmi") (runSh "echo ${cfg.laptopBatteryChargeThreshold} > /sys/class/power_supply/BAT?/charge_control_end_threshold")]}
+                ''
+            else ""
+        else "";
 
     mkeUdevRule = listOfLists:
     let 
@@ -149,6 +160,14 @@ in {
                     If unsure run `nix-shell -p dmidecode --run 'sudo dmidecode | grep "Product Name:"'`
                 '';
             };
+            laptopBatteryChargeThreshold = mkOption {
+                type = types.int;
+                default = 100;
+                example = "60";
+                description = ''
+                    At what threshold should the battery stop charging?
+                '';
+            };
             cpu = mkOption {
                 type = types.nullOr cpuEnum;
                 default = null;
@@ -204,14 +223,18 @@ in {
                 options kvm_${if isAmdCpu then "amd" else "intel"} emulate_invalid_guest_state=0
                 options kvm ignore_msrs=1
             '';
-            kernelPackages = mkIf (isDesktop || isLaptop) pkgs.linuxKernel.packages.linux_xanmod; 
+            #kernelPackages = mkIf (isDesktop || isLaptop) pkgs.linuxKernel.packages.linux_xanmod; 
             
-            kernelModules = [
+            initrd.kernelModules = [
                 (optionalString (isAmdCpu   && virtEnabled) "kvm-amd")
                 (optionalString (isIntelCpu && virtEnabled) "kvm-intel" )
                 (optionalString (isAmdGpu) "amdgpu")
                 (optionalString (isDesktop || isLaptop) "i2c-dev")
                 (optionalString (isLaptop) "acpi_call")
+                (optionalString (cfg.laptopManufacturer == "asus") "asus-nb-wmi")
+                (optionalString (cfg.externMonitorName != null) "i2c-dev")
+                (optionalString (cfg.externMonitorName != null) "i2c-piix4")
+
             ];
 
             kernel.sysctl = mkIf cfg.ssdBoot {
@@ -407,17 +430,13 @@ in {
                     # KERNEL=="i2c-[0-9]*", GROUP="i2c", MODE="0660"
                     ''}
 
-                    ${optionalString (isLTModel ["ZenBook_UM425IA" "ZenBook_UX425IA"]) ''
-                    # Should stop charging after 60% battery
-                    ${mkeUdevRule [ actionAdd (genKernel "asus-nb-wmi") (runSh "echo 60 > /sys/class/power_supply/BAT?/charge_control_end_threshold")]}
-                    ''}
+                    ${laptopBatteryChargeThresholdUdev}
 
                 '';
             };
         };
 
         systemd.services = {
-
             asus-touchpad-numpad = mkIf (isLTModel ["ZenBook_UM425IA" "ZenBook_UX425IA"]) {
                 description = "Asus Touchpad to Numpad Handler";
                 documentation = ["https://github.com/mohamed-badaoui/asus-touchpad-numpad-driver"];
