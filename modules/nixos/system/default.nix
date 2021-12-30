@@ -1,6 +1,9 @@
 { config, options, lib, pkgs, ... }:
 with lib;
 let
+    optionalMultiString = cond: list: 
+        if cond then concatStringsSep "\n" list else "";
+    
     cfg         = config.system;
     isAmdCpu    = cfg.cpu == "amd";
     isIntelCpu  = cfg.cpu == "intel";
@@ -13,6 +16,7 @@ let
     isServer    = cfg.kind == "server"; 
     isSoc       = cfg.kind == "soc";
     hasUSBMon   = cfg.usbMonitor;
+    hasExtMon   = cfg.externMonitorName != null;
 
     sysKindEnum            = types.enum [
             "desktop"
@@ -29,16 +33,61 @@ let
             "intel"
             "nvidia"
         ];
-    laptopManufacturerEnum = types.enum [
+
+    motherboardManufacturerEnum = types.enum [
             "asus"
+            "supermicro"
         ];
-    laptopModelEnum        = types.enum [
-            "ZenBook_UM425IA" 
+    motherboardModelEnum        = types.enum [
+            "x10sll-f" 
             "ZenBook_UX425IA"
         ];
+    laptopManufacturerEnum = types.enum [
+            "asus"
+            "lenovo"
+        ];
+    laptopModelEnum        = types.enum [
+            # Asus
+            "ZenBook_UM425IA" 
+            "ZenBook_UX425IA"
+            "ROG_Strix_g733qs"
+            "Zephyrus_ga401"
+            "TUF_fx504gd"
 
-    isLTManuf = models: if cfg.laptopManufacturer != null then any (model: cfg.laptopManufacturer == model) models else false;
-    isLTModel = models: if cfg.laptopModel != null then any (model: cfg.laptopModel == model) models else false;
+            # Lenovo
+            "Thinkpad_t440s"
+            "Thinkpad_t440p"
+        ];
+
+    # This only works if there are no motherboard models with the same name
+    # as a motherboard manufacturer
+    hasMobo = motherboard: 
+        let 
+            mobo = if isString laptop then singleton motherboard else motherboard;
+            isMotherboardManufurer = manufacturers: if cfg.motherboardManufacturer != null then any (manufacturer: cfg.motherboardManufacturer == manufacturer) manufacturers else false;
+            isMotherboardModel = models: if cfg.motherboardModel != null then any (model: cfg.motherboardModel == model) models else false;
+        in
+    if isMotherboardManufurer mobo then true
+    else if isMotherboardModel mobo then true
+    else false;
+
+    supermicroKernelModules = optional (hasMobo "supermicro") [ "ipmi_devintf" "ipmi_si" ] ++ 
+        optional ("x10sll-f" ) [ "jc42" "tpm_rng" ];
+
+    # This only works if there are no laptop models with the same name
+    # as a laptop manufacturer
+    hasLaptop' = laptop: laptopOpt: 
+        let 
+            laptopMan = lib.toList laptop;
+            laptopMod = lib.toList (if (laptopOpt != null) then laptopOpt else laptop);
+            isLaptopManufacturer = manufacturers: if cfg.laptopManufacturer != null then any (manufacturer: cfg.laptopManufacturer == manufacturer) manufacturers else false;
+            isLaptopModel = models: if cfg.laptopModel != null then any (model: cfg.laptopModel == model) models else false;
+        in
+    if isLaptopManufacturer laptopMan then true
+    else if isLaptopModel laptopMod then true
+    else false;
+
+    hasLaptop = laptop: hasLaptop' laptop null;
 
     laptopBatteryChargeThresholdUdev =
         if (cfg.laptopBatteryChargeThreshold > 0 && cfg.laptopBatteryChargeThreshold < 100) then
@@ -140,6 +189,28 @@ in {
                 example = "desktop";
                 description = "What kind of system is this?";
             };
+            motherboardManufacturer = mkOption {
+                type = types.nullOr motherboardManufacturerEnum;
+                default = null;
+                example = "asus";
+                description = ''
+                    Who manufactured your desktop's motherboard?
+
+                    If unsure run `nix-shell -p dmidecode --run 'sudo dmidecode | grep Manufacturer | head -n1'`.
+                    Currently supported options are ${toString motherboardManufacturerEnum}
+                '';
+            };
+            motherboardModel = mkOption {
+                type = types.nullOr motherboardModelEnum;
+                default = null;
+                example = "ZenBook_UM425IA";
+                description = ''
+                    What model is your desktop's motherboard?
+
+                    If unsure run `nix-shell -p dmidecode --run 'sudo dmidecode | grep "Product Name:"'`.
+                    Currently supported options are ${toString motherboardModelEnum}
+                '';
+            };
             laptopManufacturer = mkOption {
                 type = types.nullOr laptopManufacturerEnum;
                 default = null;
@@ -147,7 +218,8 @@ in {
                 description = ''
                     Who manufactured your laptop?
 
-                    If unsure run `nix-shell -p dmidecode --run 'sudo dmidecode | grep Manufacturer | head -n1'`
+                    If unsure run `nix-shell -p dmidecode --run 'sudo dmidecode | grep Manufacturer | head -n1'`laptopModelEnumlaptopModelEnum.
+                    Currently supported options are ${toString laptopManufacturerEnum}
                 '';
             };
             laptopModel = mkOption {
@@ -157,7 +229,8 @@ in {
                 description = ''
                     What model is your laptop?
 
-                    If unsure run `nix-shell -p dmidecode --run 'sudo dmidecode | grep "Product Name:"'`
+                    If unsure run `nix-shell -p dmidecode --run 'sudo dmidecode | grep "Product Name:"'`.
+                    Currently supported options are ${toString laptopModelEnum}
                 '';
             };
             laptopBatteryChargeThreshold = mkOption {
@@ -223,18 +296,26 @@ in {
                 options kvm_${if isAmdCpu then "amd" else "intel"} emulate_invalid_guest_state=0
                 options kvm ignore_msrs=1
             '';
-            #kernelPackages = mkIf (isDesktop || isLaptop) pkgs.linuxKernel.packages.linux_xanmod; 
+            kernelPackages = mkIf ((isDesktop || isLaptop) && !hasUSBMon) pkgs.linuxKernel.packages.linux_xanmod; 
             
             initrd.kernelModules = [
+                # KVM kernel modules
                 (optionalString (isAmdCpu   && virtEnabled) "kvm-amd")
                 (optionalString (isIntelCpu && virtEnabled) "kvm-intel" )
-                (optionalString (isAmdGpu) "amdgpu")
-                (optionalString (isDesktop || isLaptop) "i2c-dev")
-                (optionalString (isLaptop) "acpi_call")
-                (optionalString (cfg.laptopManufacturer == "asus") "asus-nb-wmi")
-                (optionalString (cfg.externMonitorName != null) "i2c-dev")
-                (optionalString (cfg.externMonitorName != null) "i2c-piix4")
 
+                # For GPUs
+                (optionalString (isAmdGpu) "amdgpu")
+
+                # For special motherboards
+                (optionalMultiString (hasMobo "supermicro") supermicroKernelModules)
+
+                # For laptops
+                (optionalString (isLaptop) "acpi_call")
+                (optionalString (hasLaptop "asus") "asus-nb-wmi")
+                (optionalString (hasLaptop ["Thinkpad_t440s" "Thinkpad_t440p"] ) "tpm-rng")
+
+                # Needed for using ddcutils on external monitor
+                (optionalMultiString hasExtMon ["i2c-dev" "i2c-piix4"] )
             ];
 
             kernel.sysctl = mkIf cfg.ssdBoot {
@@ -299,7 +380,9 @@ in {
                 driSupport = true;
                 driSupport32Bit = true;
             };
-            i2c = mkIf (isLTModel ["ZenBook_UM425IA" "ZenBook_UX425IA"]) {
+
+            # Required for numpad to work (could probably find exact i2c device)
+            i2c = mkIf (hasLaptop ["ZenBook_UM425IA" "ZenBook_UX425IA"]) {
                 enable = true;
             };
         };
@@ -437,7 +520,7 @@ in {
         };
 
         systemd.services = {
-            asus-touchpad-numpad = mkIf (isLTModel ["ZenBook_UM425IA" "ZenBook_UX425IA"]) {
+            asus-touchpad-numpad = mkIf (hasLaptop ["ZenBook_UM425IA" "ZenBook_UX425IA"]) {
                 description = "Asus Touchpad to Numpad Handler";
                 documentation = ["https://github.com/mohamed-badaoui/asus-touchpad-numpad-driver"];
                 path = [ pkgs.i2c-tools ];
