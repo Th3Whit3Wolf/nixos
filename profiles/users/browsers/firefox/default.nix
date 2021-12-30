@@ -78,17 +78,23 @@ let
         "browser.bookmarks.file" = toString bookmarksPath;
         "browser.places.importBookmarksHTML" = true;
         #"browser.tabs.loadBookmarksInBackground" = true;
-        #"browser.bookmarks.addedImportButton" = false;
+        "browser.bookmarks.addedImportButton" = false;
         #"browser.bookmarks.restore_default_bookmarks" = true;
         "browser.toolbars.bookmarks.visibility" = "always";
-        "browser.uiCustomization.state" = (builtins.toJSON uiState);
+        #"browser.uiCustomization.state" = (builtins.toJSON uiState);
     };
 in
 {
     programs.firefox = {
         inherit extensions;
         enable = true;
-        package = pkgs.firefox-wayland;
+        #package = pkgs.firefox-wayland;
+        package = pkgs.wrapFirefox pkgs.firefox-unwrapped {
+            forceWayland = true;
+            extraPolicies = {
+            ExtensionSettings = {};
+            };
+        };
         profiles.${username} = {
             inherit settings;
         };
