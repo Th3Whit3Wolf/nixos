@@ -76,7 +76,16 @@ in {
     ] ++ [zoom zoomUsFixed];
   };
 
-
+/*
+  xdg.portal = {
+    enable = true;
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-wlr
+      xdg-desktop-portal-gtk
+    ];
+    gtkUsePortal = true;
+  };
+*/
   ${user} = { lib, ... }: {
     imports = [
       ../desktop/gnome.nix
@@ -92,9 +101,10 @@ in {
           };
         };
       };
+      sessionVariables = {
+        MOZ_ENABLE_WAYLAND = if isWayland then 1 else 0;
+      };
     };
-
-    
 
     programs = {
       git = {
@@ -134,6 +144,7 @@ in {
           XDG_BIN_HOME = "/home/doc/.local/bin";
         };
       };  
+      
       configFile = {
         "electron-flags.conf" = lib.mkIf isWayland {
           text = ''
