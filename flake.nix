@@ -11,7 +11,8 @@
   description = "A highly awesome system configuration.";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/21.11";
+    #nixpkgs.url = "git+file:///persist/etc/nixpkgs";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-21.11";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nur.url = "github:nix-community/NUR";
     utils.url = "github:gytis-ivaskevicius/flake-utils-plus/v1.3.0";
@@ -67,6 +68,7 @@
 
       overlays = import ./overlays;
       packages = import ./pkgs;
+      
 
     in mkFlake rec {
       inherit self inputs lib;
@@ -78,20 +80,21 @@
   # Reference to `channels.<name>.*`, defines default channel to be used by hosts. Defaults to "nixpkgs".
   hostDefaults.channelName = "stable";
 
-      channels.stable = {
-        input = nixpkgs;
-        config = { 
-          allowUnfree = true;
-          #allowBroken = true;
-        };
-        overlaysBuilder = channels: [
-          overlays
-          (final: prev: { 
-            nix-direnv = prev.nix-direnv.override { enableFlakes = true; };
-            nix = channels.unstable.nix;
-            })
-        ];
-      };
+  channels.stable = {
+    input = nixpkgs;
+    config = { 
+      allowUnfree = true;
+      #allowBroken = true;
+    };
+    overlaysBuilder = channels: [
+      overlays
+      (final: prev: { 
+        nix-direnv = prev.nix-direnv.override { enableFlakes = true; };
+        nix = channels.unstable.nix;
+
+      })
+    ];
+  };
 
       channels.unstable = {
         input = unstable;
