@@ -11,5 +11,6 @@
       enable = true;
       openFirewall = true;
     };
+    fwupd.enable = true;
   };
 }
