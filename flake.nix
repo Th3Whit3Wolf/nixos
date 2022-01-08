@@ -91,6 +91,13 @@
       (final: prev: { 
         nix-direnv = prev.nix-direnv.override { enableFlakes = true; };
         nix = channels.unstable.nix;
+        displaylink = prev.displaylink.overrideAttrs(oldAttrs: {
+          src = prev.fetchurl {
+            name = "displaylink-v5.4.1";
+            url = "https://www.synaptics.com/sites/default/files/exe_files/2021-09/DisplayLink%20USB%20Graphics%20Software%20for%20Ubuntu5.4.1-EXE.zip";
+            sha256 = "1biswvjz91gmx7xf9g05h3ra463hf2yv9mr2nkxclyrd283iiiqc";
+          };  
+        });
 
       })
     ];
