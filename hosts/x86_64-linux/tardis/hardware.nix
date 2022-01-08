@@ -65,7 +65,7 @@ in  {
       device = "tmpfs";
       fsType = "tmpfs";
       options = fsOptBase ++
-        [ "defaults" "size=4G" "mode=755" "noexec" ];
+        [ "defaults" "size=6G" "mode=755" "noexec" ];
     };
 
     "/tmp" = {
