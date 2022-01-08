@@ -123,11 +123,13 @@ let
         (lib.optionalString (hasGPG) "${gpgHomeDir}/openpgp-revocs.d")
 
         # Nix Polyglot
+        (lib.optionalString (lang "go")   "${data}/go")
+        (lib.optionalString (lang "javascript") "${cache}/npm")
         (lib.optionalString (lang "rust") "${data}/cargo")
         (lib.optionalString (lang "rust") "${data}/rustup")
         #(lib.optionalString true /*(lang "rust")*/ "${data}/cargo")
         #(lib.optionalString true /*(lang "rust")*/ "${data}/rustup")
-        (lib.optionalString (lang "go")   "${data}/go")
+
 
         # Vscode
         (lib.optionalString (vscodePname != null) "${conf}/${vscodeConfigDir}")
