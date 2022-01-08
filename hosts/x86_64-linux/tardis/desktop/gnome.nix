@@ -26,7 +26,7 @@ in
     };
 
     "org/gnome/control-center" = {
-      last-panel = "keyboard";
+      last-panel = "power";
     };
 
     "org/gnome/desktop/background" = {
@@ -54,6 +54,7 @@ in
       font-hinting = "slight";
       gtk-im-module = "gtk-im-context-simple";
       locate-pointer = true;
+      show-battery-percentage = true;
     };
 
     "org/gnome/desktop/notifications" = {
@@ -69,7 +70,7 @@ in
     };
 
     "org/gnome/desktop/peripherals/keyboard" = {
-      numlock-state = true;
+      numlock-state = false;
     };
 
     "org/gnome/desktop/peripherals/mouse" = {
@@ -179,7 +180,7 @@ in
 
     "org/gnome/shell/extensions/bigsur-statusarea" = {
       activate-spacing = false;
-      items = "'Calendar;1;1;calendar|Light;0;0;light|Night Light;0;0;nightlight|Volume;1;0;volume|Network;1;0;network|Bluetooth;1;0;bluetooth|Power;1;0;power|Notification;1;0;notification|User;1;0;user'";
+      items = ""'Calendar;1;1;calendar|Light;0;0;light|Night Light;0;0;nightlight|Volume;1;0;volume|Network;1;0;network|Bluetooth;1;0;bluetooth|Power;1;0;power|Notification;1;0;notification|User;1;0;user'"";
       separate-date-and-notification = true;
     };
 
@@ -195,6 +196,7 @@ in
       dock-position = "BOTTOM";
       force-straight-corner = false;
       height-fraction = 0.5;
+      hot-keys = false;
       icon-size-fixed = false;
       isolate-monitors = true;
       max-alpha = 0.75;
