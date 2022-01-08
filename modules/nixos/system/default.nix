@@ -40,7 +40,6 @@ let
         ];
     motherboardModelEnum        = types.enum [
             "x10sll-f" 
-            "ZenBook_UX425IA"
         ];
     laptopManufacturerEnum = types.enum [
             "acer"
@@ -70,35 +69,52 @@ let
             "Old_Thinkpad" # https://www.thinkwiki.org/wiki/Tp_smapi#Model-specific_status
         ];
 
-    # This only works if there are no motherboard models with the same name
-    # as a motherboard manufacturer
-    hasMobo = motherboard: 
+    hasMoboFactory = motherboardManufacturer: motherboardModel: getBy:
         let 
-            mobo = if isString laptop then singleton motherboard else motherboard;
-            isMotherboardManufurer = manufacturers: if cfg.motherboardManufacturer != null then any (manufacturer: cfg.motherboardManufacturer == manufacturer) manufacturers else false;
-            isMotherboardModel = models: if cfg.motherboardModel != null then any (model: cfg.motherboardModel == model) models else false;
-        in
-    if isMotherboardManufurer mobo then true
-    else if isMotherboardModel mobo then true
-    else false;
+            moboMan = if (motherboardMan != null) then lib.toList motherboardManufacturer else [];
+            moboMod = if (motherboardModel != null) then lib.toList motherboardModel else [];
+            isMotherboardManufurer = manufacturers: 
+                (cfg.motherboardManufacturer != null) && 
+                (any (manufacturer: cfg.motherboardManufacturer == manufacturer) manufacturers);
+            isMotherboardModel = models: 
+                (cfg.motherboardModel != null) && 
+                (any (model: cfg.motherboardModel == model) models);
+        in if (getBy == 0) then
+            isMotherboardManufurer moboMan
+        else if (getBy == 1) then
+            isMotherboardModel moboMod
+        else if (getBy == 2) then 
+            (isMotherboardManufurer moboMan) || (isMotherboardModel moboMod)
+        else false;
 
-    supermicroKernelModules = optional (hasMobo "supermicro") [ "ipmi_devintf" "ipmi_si" ] ++ 
-        optional ("x10sll-f" ) [ "jc42" "tpm_rng" ];
+    hasMoboManufacturer = manufacturer: hasMoboFactory manufacturer null 1;
+    hasMoboModel = model: hasMoboFactory null model 2;
+    hasMobo = manufacturer: model: hasMoboFactory manufacturer model 3;
 
-    # This only works if there are no laptop models with the same name
-    # as a laptop manufacturer
-    hasLaptop' = laptop: laptopOpt: 
+    hasLaptopFactory = lapyopdManufacturer: laptopModel: getBy:
         let 
-            laptopMan = lib.toList laptop;
-            laptopMod = lib.toList (if (laptopOpt != null) then laptopOpt else laptop);
-            isLaptopManufacturer = manufacturers: if cfg.laptopManufacturer != null then any (manufacturer: cfg.laptopManufacturer == manufacturer) manufacturers else false;
-            isLaptopModel = models: if cfg.laptopModel != null then any (model: cfg.laptopModel == model) models else false;
-        in
-    if isLaptopManufacturer laptopMan then true
-    else if isLaptopModel laptopMod then true
-    else false;
+            laptopMan = if (lapyopdManufacturer != null) then lib.toList lapyopdManufacturer else [];
+            laptopMod = if (laptopModel != null) then lib.toList laptopModel else [];
+            isMotherboardManufurer = manufacturers: 
+                (cfg.laptopManufacturer != null) && 
+                (any (manufacturer: cfg.laptopManufacturer == manufacturer) manufacturers);
+            isMotherboardModel = models: 
+                (cfg.laptopModel != null) && 
+                (any (model: cfg.laptopModel == model) models);
+        in if (getBy == 0) then
+            isMotherboardManufurer laptopMan
+        else if (getBy == 1) then
+            isMotherboardModel laptopMod
+        else if (getBy == 2) then 
+            (isMotherboardManufurer laptopMan) || (isMotherboardModel laptopMod)
+        else false;
 
-    hasLaptop = laptop: hasLaptop' laptop null;
+    hasLaptopManufacturer = manufacturer: hasLaptopFactory manufacturer null 1;
+    hasLaptopModel = model: hasLaptopFactory null model 2;
+    hasLaptop = manufacturer: model: hasLaptopFactory manufacturer model 3;
+
+    supermicroKernelModules = optionalMultiString (hasMoboManufacturer "supermicro")
+        ([ "ipmi_devintf" "ipmi_si" ] ++ optional (hasMoboModel "x10sll-f") [ "jc42" "tpm_rng" ]);
 
     laptopBatteryChargeThresholdUdev =
         if (cfg.laptopBatteryChargeThreshold > 0 && cfg.laptopBatteryChargeThreshold < 100) then
@@ -203,7 +219,7 @@ in {
             motherboardManufacturer = mkOption {
                 type = types.nullOr motherboardManufacturerEnum;
                 default = null;
-                example = "asus";
+                example = "supermicro";
                 description = ''
                     Who manufactured your desktop's motherboard?
 
@@ -214,7 +230,7 @@ in {
             motherboardModel = mkOption {
                 type = types.nullOr motherboardModelEnum;
                 default = null;
-                example = "ZenBook_UM425IA";
+                example = "x10sll-f";
                 description = ''
                     What model is your desktop's motherboard?
 
@@ -319,16 +335,16 @@ in {
                 (optionalString (isIntelCpu) "i915")
 
                 # For special motherboards
-                (optionalMultiString (hasMobo "supermicro") supermicroKernelModules)
+                supermicroKernelModules
 
                 # For laptops
                 (optionalString (isLaptop) "acpi_call")
-                (optionalString (hasLaptop "Aspire_4810t") "ata_piix")
-                (optionalString (hasLaptop "MacBook_Air6") "mba6x_bl")
-                (optionalString (hasLaptop "asus") "asus-nb-wmi")
-                (optionalString (hasLaptop ["Thinkpad_t440s" "Thinkpad_t440p" "Thinkpad_x230"] ) "tpm-rng")
-                (optionalString (hasLaptop "Old_Thinkpad") "tp_smapi" )
-                (optionalString (hasLaptop "Thinkpad_x13") "psmouse" )
+                (optionalString (hasLaptopModel "Aspire_4810t") "ata_piix")
+                (optionalString (hasLaptopModel "MacBook_Air6") "mba6x_bl")
+                (optionalString (hasLaptopManufacturer "asus") "asus-nb-wmi")
+                (optionalString (hasLaptopModel ["Thinkpad_t440s" "Thinkpad_t440p" "Thinkpad_x230"] ) "tpm-rng")
+                (optionalString (hasLaptopModel "Old_Thinkpad") "tp_smapi" )
+                (optionalString (hasLaptopModel "Thinkpad_x13") "psmouse" )
                 # Needed for using ddcutils on external monitor
                 (optionalMultiString hasExtMon ["i2c-dev" "i2c-piix4"] )
             ];
@@ -397,7 +413,7 @@ in {
             };
 
             # Required for numpad to work (could probably find exact i2c device)
-            i2c = mkIf (hasLaptop ["ZenBook_UM425IA" "ZenBook_UX425IA"]) {
+            i2c = mkIf (hasLaptopModel ["ZenBook_UM425IA" "ZenBook_UX425IA"]) {
                 enable = true;
             };
         };
@@ -535,7 +551,7 @@ in {
         };
 
         systemd.services = {
-            asus-touchpad-numpad = mkIf (hasLaptop ["ZenBook_UM425IA" "ZenBook_UX425IA"]) {
+            asus-touchpad-numpad = mkIf (hasLaptopModel ["ZenBook_UM425IA" "ZenBook_UX425IA"]) {
                 description = "Asus Touchpad to Numpad Handler";
                 documentation = ["https://github.com/mohamed-badaoui/asus-touchpad-numpad-driver"];
                 path = [ pkgs.i2c-tools ];
