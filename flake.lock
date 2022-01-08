@@ -212,21 +212,21 @@
       },
       "locked": {
         "narHash": "sha256-Vw+1wnJcplGARJpUjnwRpGPyHkLKgxebe/fnWXzy/Ng=",
-        "path": "/nix/store/dgik0a0a2m6kpkzakk3b9x0zk2azc0lw-source/external/nixpolyglot",
+        "path": "/nix/store/9zz51pa0i4jsd10zvihzfb54z4i3hnxa-source/external/nixpolyglot",
         "type": "path"
       },
       "original": {
-        "path": "/nix/store/dgik0a0a2m6kpkzakk3b9x0zk2azc0lw-source/external/nixpolyglot",
+        "path": "/nix/store/9zz51pa0i4jsd10zvihzfb54z4i3hnxa-source/external/nixpolyglot",
         "type": "path"
       }
     },
     "nur": {
       "locked": {
-        "lastModified": 1641619351,
-        "narHash": "sha256-3HM3dZoPsKCt731ORbFCnR2fhHwnImGaks1zNpxN9MU=",
+        "lastModified": 1641645925,
+        "narHash": "sha256-fT9nNkG97KPMMhXAfQtOG35y8nfMPnDwIeAI2TUSa0I=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "8dd9183b31af54e7e37bed6033f0405f00d3916f",
+        "rev": "238917d0de4175d1349bbbff1246c1ff05cf9a80",
         "type": "github"
       },
       "original": {
