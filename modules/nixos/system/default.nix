@@ -34,20 +34,20 @@ let
             "nvidia"
         ];
 
-    motherboardManufacturerEnum = types.enum [
+    motherboardManufacturerEnum =  [
             "asus"
             "supermicro"
         ];
-    motherboardModelEnum        = types.enum [
+    motherboardModelEnum        =  [
             "x10sll-f" 
         ];
-    laptopManufacturerEnum = types.enum [
+    laptopManufacturerEnum =  [
             "acer"
             "apple"
             "asus"
             "lenovo"
         ];
-    laptopModelEnum        = types.enum [
+    laptopModelEnum        =  [
             # Acer
             "Aspire_4810t"
 
@@ -71,47 +71,71 @@ let
 
     hasMoboFactory = motherboardManufacturer: motherboardModel: getBy:
         let 
-            moboMan = if (motherboardMan != null) then lib.toList motherboardManufacturer else [];
-            moboMod = if (motherboardModel != null) then lib.toList motherboardModel else [];
-            isMotherboardManufurer = manufacturers: 
+            moboMan = if (motherboardMan != null) then 
+                let list = lib.toList motherboardManufacturer; in
+                if (builtins.all (val: builtins.elem val motherboardManufacturerEnum) list) then
+                    list
+                else
+                    throw "hasMoboFactory reguires its motherboardManufacturer parameter to be one of ${toString motherboardManufacturerEnum}\nReceived: ${toString list}"
+            else [];
+            moboMod = if (motherboardModel != null) then
+                let list = lib.toList motherboardModel; in
+                if (builtins.all (val: builtins.elem val motherboardModelEnum) list) then
+                    list
+                else
+                    throw "hasMoboFactory reguires its motherboardModel parameter to be one of ${toString motherboardModelEnum}\nReceived: ${toString list}"
+                else [];
+            isMotherboardManufacturer = manufacturers: 
                 (cfg.motherboardManufacturer != null) && 
                 (any (manufacturer: cfg.motherboardManufacturer == manufacturer) manufacturers);
             isMotherboardModel = models: 
                 (cfg.motherboardModel != null) && 
                 (any (model: cfg.motherboardModel == model) models);
         in if (getBy == 0) then
-            isMotherboardManufurer moboMan
+            isMotherboardManufacturer moboMan
         else if (getBy == 1) then
             isMotherboardModel moboMod
         else if (getBy == 2) then 
-            (isMotherboardManufurer moboMan) || (isMotherboardModel moboMod)
+            (isMotherboardManufacturer moboMan) || (isMotherboardModel moboMod)
         else false;
 
-    hasMoboManufacturer = manufacturer: hasMoboFactory manufacturer null 1;
-    hasMoboModel = model: hasMoboFactory null model 2;
-    hasMobo = manufacturer: model: hasMoboFactory manufacturer model 3;
+    hasMoboManufacturer = manufacturer: hasMoboFactory manufacturer null 0;
+    hasMoboModel = model: hasMoboFactory null model 1;
+    hasMobo = manufacturer: model: hasMoboFactory manufacturer model 2;
 
-    hasLaptopFactory = lapyopdManufacturer: laptopModel: getBy:
+    hasLaptopFactory = laptopManufacturer: laptopModel: getBy:
         let 
-            laptopMan = if (lapyopdManufacturer != null) then lib.toList lapyopdManufacturer else [];
-            laptopMod = if (laptopModel != null) then lib.toList laptopModel else [];
-            isMotherboardManufurer = manufacturers: 
+            laptopMan = if (laptopManufacturer != null) then 
+                let list = lib.toList laptopManufacturer; in
+                if (builtins.all (val: builtins.elem val laptopManufacturerEnum) list) then
+                    list
+                else
+                    throw "laptopManufacturer reguires its laptopManufacturer parameter to be one of ${toString laptopManufacturerEnum}\nReceived: ${toString list}"
+            else [];
+            laptopMod = if (laptopModel != null) then 
+                let list = lib.toList laptopModel; in
+                if (builtins.all (val: builtins.elem val laptopModelEnum) list) then
+                    list
+                else
+                    throw "laptopManufacturer reguires its laptopModel parameter to be one of ${toString laptopModelEnum}\nReceived: ${toString list}"
+            else [];
+            isLaptopManufacturer = manufacturers: 
                 (cfg.laptopManufacturer != null) && 
                 (any (manufacturer: cfg.laptopManufacturer == manufacturer) manufacturers);
-            isMotherboardModel = models: 
+            isLaptopModel = models: 
                 (cfg.laptopModel != null) && 
                 (any (model: cfg.laptopModel == model) models);
         in if (getBy == 0) then
-            isMotherboardManufurer laptopMan
+            isLaptopManufacturer laptopMan
         else if (getBy == 1) then
-            isMotherboardModel laptopMod
+            isLaptopModel laptopMod
         else if (getBy == 2) then 
-            (isMotherboardManufurer laptopMan) || (isMotherboardModel laptopMod)
+            (isLaptopManufacturer laptopMan) || (isLaptopModel laptopMod)
         else false;
 
-    hasLaptopManufacturer = manufacturer: hasLaptopFactory manufacturer null 1;
-    hasLaptopModel = model: hasLaptopFactory null model 2;
-    hasLaptop = manufacturer: model: hasLaptopFactory manufacturer model 3;
+    hasLaptopManufacturer = manufacturer: hasLaptopFactory manufacturer null 0;
+    hasLaptopModel = model: hasLaptopFactory null model 1;
+    hasLaptop = manufacturer: model: hasLaptopFactory manufacturer model 2;
 
     supermicroKernelModules = optionalMultiString (hasMoboManufacturer "supermicro")
         ([ "ipmi_devintf" "ipmi_si" ] ++ optional (hasMoboModel "x10sll-f") [ "jc42" "tpm_rng" ]);
@@ -217,7 +241,7 @@ in {
                 description = "What kind of system is this?";
             };
             motherboardManufacturer = mkOption {
-                type = types.nullOr motherboardManufacturerEnum;
+                type = types.nullOr (types.enum motherboardManufacturerEnum);
                 default = null;
                 example = "supermicro";
                 description = ''
@@ -228,7 +252,7 @@ in {
                 '';
             };
             motherboardModel = mkOption {
-                type = types.nullOr motherboardModelEnum;
+                type = types.nullOr (types.enum motherboardModelEnum);
                 default = null;
                 example = "x10sll-f";
                 description = ''
@@ -239,18 +263,18 @@ in {
                 '';
             };
             laptopManufacturer = mkOption {
-                type = types.nullOr laptopManufacturerEnum;
+                type = types.nullOr (types.enum laptopManufacturerEnum);
                 default = null;
                 example = "asus";
                 description = ''
                     Who manufactured your laptop?
 
-                    If unsure run `nix-shell -p dmidecode --run 'sudo dmidecode | grep Manufacturer | head -n1'`laptopModelEnumlaptopModelEnum.
+                    If unsure run `nix-shell -p dmidecode --run 'sudo dmidecode | grep Manufacturer | head -n1'`.
                     Currently supported options are ${toString laptopManufacturerEnum}
                 '';
             };
             laptopModel = mkOption {
-                type = types.nullOr laptopModelEnum;
+                type = types.nullOr (types.enum laptopModelEnum);
                 default = null;
                 example = "ZenBook_UM425IA";
                 description = ''
