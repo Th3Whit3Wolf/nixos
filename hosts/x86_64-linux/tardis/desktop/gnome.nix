@@ -180,7 +180,7 @@ in
 
     "org/gnome/shell/extensions/bigsur-statusarea" = {
       activate-spacing = false;
-      items = ""'Calendar;1;1;calendar|Light;0;0;light|Night Light;0;0;nightlight|Volume;1;0;volume|Network;1;0;network|Bluetooth;1;0;bluetooth|Power;1;0;power|Notification;1;0;notification|User;1;0;user'"";
+      items = "'Calendar;1;1;calendar|Light;0;0;light|Night Light;0;0;nightlight|Volume;1;0;volume|Network;1;0;network|Bluetooth;1;0;bluetooth|Power;1;0;power|Notification;1;0;notification|User;1;0;user'";
       separate-date-and-notification = true;
     };
 

@@ -212,11 +212,11 @@
       },
       "locked": {
         "narHash": "sha256-Vw+1wnJcplGARJpUjnwRpGPyHkLKgxebe/fnWXzy/Ng=",
-        "path": "/nix/store/lsmim8zsxpha6y6ijzc423pnlhbf9bc0-source/external/nixpolyglot",
+        "path": "/nix/store/dgik0a0a2m6kpkzakk3b9x0zk2azc0lw-source/external/nixpolyglot",
         "type": "path"
       },
       "original": {
-        "path": "/nix/store/lsmim8zsxpha6y6ijzc423pnlhbf9bc0-source/external/nixpolyglot",
+        "path": "/nix/store/dgik0a0a2m6kpkzakk3b9x0zk2azc0lw-source/external/nixpolyglot",
         "type": "path"
       }
     },
