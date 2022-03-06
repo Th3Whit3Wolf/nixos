@@ -21,11 +21,16 @@ let
     "gc_merge"
     "compress_algorithm=zstd:3"
   ];
+
+  rtl8814au = config.boot.kernelPackages.rtl8814au;
 in  {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
   boot = {
     consoleLogLevel = 0;
+    extraModulePackages = [
+        rtl8814au
+      ];
     initrd = {
       verbose = false;
       availableKernelModules = [
@@ -42,6 +47,8 @@ in  {
         "i2c-dev"
         "i2c-piix4"
       ];
+
+     
 
       luks.devices = {
         "crypt_nix" = {
@@ -64,6 +71,10 @@ in  {
 
       };
     };
+
+     
+
+   
 
     kernelParams = [
       # Give interactive shell option on boot faile
