@@ -12,7 +12,9 @@ let
     (mapAttrsToList (name: type: if type == "directory" then "${name}" else "")
       (readDir (./lang))) ++ [ "all" ];
 
-  polyglotPackages = with pkgs; [ git-ignore licensor just dotenv-linter ];
+  polyglotPackages = with pkgs; [ git-ignore
+   #licensor 
+   just dotenv-linter ];
 
   system = "x86_64-linux";
   overlay = import ../../overlays;
