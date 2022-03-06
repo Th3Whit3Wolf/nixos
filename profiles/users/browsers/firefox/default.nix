@@ -71,6 +71,7 @@ let
         temporary-containers
         terms-of-service-didnt-read
         tree-style-tab
+        react-devtools
         ublock-origin
         unpaywall
     ];
