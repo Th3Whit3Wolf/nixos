@@ -75,10 +75,12 @@ in {
 
 
   ${user} = { lib, ... }: {
+   
+    home = { stateVersion = "21.05"; };
+
     imports = [
       ../desktop/gnome.nix
     ];
-    home = { stateVersion = "21.05"; };
 
     programs = {
       git = {
