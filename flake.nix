@@ -77,39 +77,35 @@
         lib.filterAttrs (_: type: type == "directory")(builtins.readDir ./hosts)
       );
 
-  # Reference to `channels.<name>.*`, defines default channel to be used by hosts. Defaults to "nixpkgs".
-  hostDefaults.channelName = "stable";
+      # Reference to `channels.<name>.*`, defines default channel to be used by hosts. Defaults to "nixpkgs".
+      hostDefaults.channelName = "stable";
 
-  channels.stable = {
-    input = nixpkgs;
-    config = { 
-      allowUnfree = true;
-      #allowBroken = true;
-    };
-    overlaysBuilder = channels: [
-      overlays
-      (final: prev: { 
-        nix-direnv = prev.nix-direnv.override { enableFlakes = true; };
-        nix = channels.unstable.nix;
-        displaylink = prev.displaylink.overrideAttrs(oldAttrs: {
-          src = prev.fetchurl {
-            name = "displaylink-v5.4.1";
-            url = "https://www.synaptics.com/sites/default/files/exe_files/2021-09/DisplayLink%20USB%20Graphics%20Software%20for%20Ubuntu5.4.1-EXE.zip";
-            sha256 = "1biswvjz91gmx7xf9g05h3ra463hf2yv9mr2nkxclyrd283iiiqc";
-          };  
-        });
-
-      })
-    ];
-  };
+      channels.stable = {
+        input = nixpkgs;
+        config = { 
+          allowUnfree = true;
+          #allowBroken = true;
+        };
+        overlaysBuilder = channels: [
+          overlays
+          (final: prev: { 
+            nix-direnv = prev.nix-direnv.override { enableFlakes = true; };
+            nix = channels.unstable.nix;
+            steam = channels.unstable.steam;
+            steam-tui = channels.unstable.steam-tui;
+            steam-run = channels.unstable.steam-run;
+            steamPackages = channels.unstable.steamPackages;
+          })
+        ];
+      };
 
       channels.unstable = {
         input = unstable;
         config = { 
           allowUnfree = true;
-         # allowBroken = true; 
+          # allowBroken = true; 
         };
-	overlaysBuilder = channels: [overlays];
+        overlaysBuilder = channels: [overlays];
       };
 
       sharedOverlays = [ nur.overlay ragenix.overlay nixpolyglot.overlay ];
@@ -119,21 +115,20 @@
         hostsPath = ./hosts;
       };
 
-      outputsBuilder = channels: {
-        packages =
-          let
-            inherit (channels.stable.stdenv.hostPlatform) system;
-          in
-          packages channels.stable ;
+    outputsBuilder = channels: {
+      packages =
+        let
+          inherit (channels.stable.stdenv.hostPlatform) system;
+        in
+        packages channels.stable;
 
-          devShell = channels.stable.mkShell {
-            buildInputs = [
-              channels.stable.nixpkgs-fmt
-              ragenix.defaultPackage.x86_64-linux
-              channels.stable.git
-            ];
-          };
-      };
-
+        devShell = channels.stable.mkShell {
+          buildInputs = [
+            channels.stable.nixpkgs-fmt
+            ragenix.defaultPackage.x86_64-linux
+            channels.stable.git
+          ];
+        };
     };
+  };
 }

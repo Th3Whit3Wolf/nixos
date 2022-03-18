@@ -6,39 +6,16 @@ let
 in
 {
   dconf.settings = {
-    "org/gnome/Connections" = {
-      first-run = false;
-    };
-
-    "org/gnome/Lollypop" = {
-      network-access-acl = 1048574;
-      notification-flag = 2;
-      window-maximized = false;
-      window-position = [ 26 23 ];
-      window-size = [ 851 600 ];
-    };
-
-    "org/gnome/calendar" = {
-      active-view = "month";
-      window-maximized = true;
-      window-position = mkTuple [ 0 0 ];
-      window-size = mkTuple [ 2560 1408 ];
-    };
-
     "org/gnome/control-center" = {
-      last-panel = "background";
+      last-panel = "mouse";
     };
 
     "org/gnome/desktop/background" = {
       color-shading-type = "solid";
       picture-options = "zoom";
-      picture-uri = "file:///persist/home/doc/.local/share/backgrounds/2021-11-28-21-16-06-mountain.jpg";
+      picture-uri = "file:///home/doc/.local/share/backgrounds/2021-11-28-21-20-25-mountain.jpg";
       primary-color = "#000000000000";
       secondary-color = "#000000000000";
-    };
-
-    "org/gnome/desktop/calendar" = {
-      show-weekdate = false;
     };
 
     "org/gnome/desktop/input-sources" = {
@@ -48,14 +25,8 @@ in
     };
 
     "org/gnome/desktop/interface" = {
-      clock-show-weekday = true;
-      font-antialiasing = "grayscale";
-      font-hinting = "slight";
+      clock-format = "12h";
       gtk-im-module = "gtk-im-context-simple";
-    };
-
-    "org/gnome/desktop/peripherals/keyboard" = {
-      numlock-state = true;
     };
 
     "org/gnome/desktop/peripherals/mouse" = {
@@ -66,11 +37,14 @@ in
       two-finger-scrolling-enabled = true;
     };
 
+    "org/gnome/desktop/privacy" = {
+      disable-microphone = false;
+    };
+
     "org/gnome/desktop/screensaver" = {
       color-shading-type = "solid";
-      lock-delay = "uint32 0";
       picture-options = "zoom";
-      picture-uri = "file:///persist/home/doc/.local/share/backgrounds/2021-11-28-21-20-25-Rob%20Bye.jpg";
+      picture-uri = "file:///home/doc/.local/share/backgrounds/2021-11-28-21-20-25-mountain.jpg";
       primary-color = "#000000000000";
       secondary-color = "#000000000000";
     };
@@ -80,7 +54,7 @@ in
     };
 
     "org/gnome/desktop/session" = {
-      idle-delay = "uint32 300";
+      idle-delay = "uint32 900";
     };
 
     "org/gnome/evolution-data-server" = {
@@ -96,92 +70,81 @@ in
       workspaces-only-on-primary = true;
     };
 
-    "org/gnome/settings-daemon/plugins/color" = {
-      night-light-temperature = "uint32 2700";
-    };
-
     "org/gnome/settings-daemon/plugins/power" = {
       sleep-inactive-ac-type = "nothing";
     };
 
     "org/gnome/shell" = {
-      disable-user-extensions = false;
-      disabled-extensions = [ "bigSur-StatusArea@ordissimo.com" "display-brightness-ddcutil@themightydeity.github.com" "blur-my-shell@aunetx" "native-window-placement@gnome-shell-extensions.gcampax.github.com" ];
-      enabled-extensions = [ "dash-to-dock@micxgx.gmail.com" "gsconnect@andyholmes.github.io" "user-theme@gnome-shell-extensions.gcampax.github.com" ];
-      favorite-apps = [ "org.gnome.Calendar.desktop" "org.gnome.Nautilus.desktop" "firefox.desktop" "org.gnome.Lollypop.desktop" "Alacritty.desktop" ];
       welcome-dialog-last-shown-version = "41.1";
-    };
-
-    "org/gnome/shell/extensions/bigsur-statusarea" = {
-      activate-spacing = false;
-      items = "Calendar;1;1;calendar|Light;0;0;light|Night Light;0;0;nightlight|Volume;1;0;volume|Network;1;0;network|Bluetooth;1;0;bluetooth|Power;1;0;power|Notification;1;0;notification|User;1;0;user";
-      separate-date-and-notification = true;
-    };
-
-    "org/gnome/shell/extensions/dash-to-dock" = {
-      animate-show-apps = true;
-      apply-custom-theme = false;
-      background-opacity = 0.72;
-      custom-theme-running-dots-border-color = "rgb(255,255,255)";
-      custom-theme-running-dots-color = "rgb(255,255,255)";
-      custom-theme-shrink = false;
-      customize-alphas = true;
-      dash-max-icon-size = 48;
-      dock-position = "BOTTOM";
-      force-straight-corner = false;
-      height-fraction = 0.5;
-      icon-size-fixed = false;
-      isolate-monitors = true;
-      max-alpha = 0.75;
-      middle-click-action = "launch";
-      min-alpha = 9.0e-2;
-      multi-monitor = true;
-      preview-size-scale = 0.89;
-      running-indicator-dominant-color = true;
-      running-indicator-style = "DEFAULT";
-      scroll-to-focused-application = true;
-      shift-click-action = "minimize";
-      shift-middle-click-action = "launch";
-      show-apps-at-top = false;
-      show-favorites = true;
-      show-show-apps-button = true;
-      show-trash = true;
-      transparency-mode = "DYNAMIC";
-      unity-backlit-items = true;
-    };
-
-    "org/gnome/shell/extensions/gsconnect" = {
-      id = "f02b50ed-8d4d-4345-997b-3b2be5ade6b1";
-      name = "nebula";
-      show-indicators = false;
-    };
-
-    "org/gnome/shell/extensions/gsconnect/preferences" = {
-      window-maximized = false;
-      window-size = mkTuple [ 640 440 ];
     };
 
     "org/gnome/shell/world-clocks" = {
       locations = "@av []";
     };
 
-    "org/gnome/tweaks" = {
-      show-extensions-notice = false;
+    "org/gnome/terminal/legacy/profiles:" = {
+      list = [ "b1dcc9dd-5262-4d8d-a863-c897e6d979b9" "e5075ad8-af87-42a2-abcf-2cf357324db8" "d85f9e37-3f5e-4987-b16a-82500f5f4dc2" "1570f75a-765e-48fa-8695-44484340963c" "85abcf43-55b0-46a2-b7d9-1f79e2460265" ];
+    };
+
+    "org/gnome/terminal/legacy/profiles:/:1570f75a-765e-48fa-8695-44484340963c" = {
+      palette = [ "rgb(0,0,0)" "rgb(228,86,73)" "rgb(80,161,79)" "rgb(152,104,1)" "rgb(64,120,242)" "rgb(166,38,164)" "rgb(1,132,188)" "rgb(160,161,167)" "rgb(92,99,112)" "rgb(224,108,117)" "rgb(80,161,79)" "rgb(152,104,1)" "rgb(64,120,242)" "rgb(166,38,164)" "rgb(1,132,188)" "rgb(255,255,255)" ];
+      use-theme-colors = false;
+      visible-name = "One Light";
+    };
+
+    "org/gnome/terminal/legacy/profiles:/:85abcf43-55b0-46a2-b7d9-1f79e2460265" = {
+      background-color = "rgb(40,42,54)";
+      bold-color = "rgb(110,70,164)";
+      bold-color-same-as-fg = false;
+      foreground-color = "rgb(248,248,242)";
+      palette = [ "rgb(38,38,38)" "rgb(227,86,167)" "rgb(66,230,108)" "rgb(228,243,74)" "rgb(155,107,223)" "rgb(230,71,71)" "rgb(117,215,236)" "rgb(239,165,84)" "rgb(122,122,122)" "rgb(255,121,198)" "rgb(80,250,123)" "rgb(241,250,140)" "rgb(189,147,249)" "rgb(255,85,85)" "rgb(139,233,253)" "rgb(255,184,108)" ];
+      use-theme-colors = false;
+      visible-name = "Dracula";
+    };
+
+    "org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9" = {
+      background-color = "rgb(41,43,46)";
+      bold-is-bright = true;
+      cursor-background-color = "rgb(227,222,221)";
+      cursor-colors-set = true;
+      cursor-foreground-color = "rgb(33,32,38)";
+      cursor-shape = "ibeam";
+      foreground-color = "rgb(178,178,178)";
+      palette = [ "rgb(10,8,20)" "rgb(242,36,31)" "rgb(103,177,29)" "rgb(177,149,29)" "rgb(58,129,195)" "rgb(163,29,177)" "rgb(33,184,199)" "rgb(178,178,178)" "rgb(66,68,74)" "rgb(223,32,28)" "rgb(41,160,173)" "rgb(219,116,46)" "rgb(57,128,194)" "rgb(44,148,115)" "rgb(107,48,98)" "rgb(104,104,104)" ];
+      use-theme-colors = false;
+      visible-name = "Space Dark";
+    };
+
+    "org/gnome/terminal/legacy/profiles:/:d85f9e37-3f5e-4987-b16a-82500f5f4dc2" = {
+      background-color = "rgb(40,44,52)";
+      bold-color = "rgb(171,178,191)";
+      bold-color-same-as-fg = false;
+      foreground-color = "rgb(171,178,191)";
+      palette = [ "rgb(0,0,0)" "rgb(224,108,117)" "rgb(152,195,121)" "rgb(209,154,102)" "rgb(97,175,239)" "rgb(198,120,221)" "rgb(86,182,194)" "rgb(171,178,191)" "rgb(92,99,112)" "rgb(224,108,117)" "rgb(152,195,121)" "rgb(209,154,102)" "rgb(97,175,239)" "rgb(198,120,221)" "rgb(86,182,194)" "rgb(255,255,255)" ];
+      use-theme-colors = false;
+      visible-name = "One Dark";
+    };
+
+    "org/gnome/terminal/legacy/profiles:/:e5075ad8-af87-42a2-abcf-2cf357324db8" = {
+      background-color = "rgb(251,248,239)";
+      bold-is-bright = true;
+      cursor-background-color = "rgb(16,10,20)";
+      cursor-colors-set = true;
+      cursor-foreground-color = "rgb(239,234,233)";
+      cursor-shape = "ibeam";
+      foreground-color = "rgb(101,83,112)";
+      palette = [ "rgb(210,206,218)" "rgb(242,36,31)" "rgb(103,177,29)" "rgb(177,149,29)" "rgb(58,129,195)" "rgb(163,29,177)" "rgb(33,184,199)" "rgb(101,83,112)" "rgb(239,234,233)" "rgb(223,32,28)" "rgb(41,160,173)" "rgb(219,116,46)" "rgb(57,128,194)" "rgb(44,148,115)" "rgb(107,48,98)" "rgb(160,148,162)" ];
+      use-theme-colors = false;
+      visible-name = "Space Light";
+    };
+
+    "org/gtk/settings/color-chooser" = {
+      custom-colors = [ (mkTuple [ 1.0 0.721569 ]) (mkTuple [ 0.627451 0.580392 ]) (mkTuple [ 0.407843 0.407843 ]) (mkTuple [ 0.698039 0.698039 ]) (mkTuple [ 0.815686 0.811765 ]) (mkTuple [ 0.419608 0.188235 ]) (mkTuple [ 0.2 0.780392 ]) (mkTuple [ 0.129412 0.721569 ]) ];
+      selected-color = mkTuple [ true 1.0 ];
     };
 
     "org/gtk/settings/file-chooser" = {
-      date-format = "regular";
-      location-mode = "path-bar";
-      show-hidden = false;
-      show-size-column = true;
-      show-type-column = true;
-      sidebar-width = 157;
-      sort-column = "name";
-      sort-directories-first = false;
-      sort-order = "ascending";
-      type-format = "category";
-      window-position = mkTuple [ 26 23 ];
-      window-size = mkTuple [ 1231 902 ];
+      clock-format = "12h";
     };
 
   };

@@ -55,7 +55,6 @@ let
     };
     downloadDir = if (config.xdg.userDirs.enable) then config.xdg.userDirs.download else "${homeDirectory}/Downs";
     extensions = with pkgs.nur.repos.rycee.firefox-addons; [
-        #auto-tab-discard
         bitwarden
         canvasblocker
         clearurls
@@ -67,7 +66,6 @@ let
         octotree
         refined-github
         multi-account-containers
-        #sidebery
         temporary-containers
         terms-of-service-didnt-read
         tree-style-tab
