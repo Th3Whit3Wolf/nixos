@@ -8,6 +8,7 @@ let
     hasNetworkManager = config.networking.networkmanager.enable;
     hasConnMan = config.services.connman.enable;
     hasChrony = config.services.chrony.enable;
+    hasDocker = config.virtualisation.docker.enable;
     hasPipeWire = config.services.pipewire.enable;
     hasSshGuard = config.services.sshguard.enable;
     hasHercules = config.services.hercules-ci-agent.enable;
@@ -30,6 +31,8 @@ let
         (lib.optionalString (hasNetworkManager) "/etc/NetworkManager")
         (lib.optionalString (hasConnMan) "/var/lib/connman")
         (lib.optionalString (hasSshGuard) "/var/lib/sshguard")
+        (lib.optionalString (hasDocker) "/var/lib/docker")
+
 
         # services.chrony.directory defaults to "/var/lib/chrony"
         (lib.optionalString (hasChrony) "${config.services.chrony.directory}")
@@ -66,6 +69,7 @@ let
         videos    = hm.xdg.userDirs.videos;
 
         hasPrg = prg: hm.programs.${prg}.enable;
+        hasSysPrg = prg: config.programs.${prg}.enable;
 
         hasZsh = hm.programs.ZSH.enable;
         hasZshInteg = integ: hm.programs.ZSH.integrations.${integ}.enable;
@@ -74,6 +78,7 @@ let
 
         hasGPG = hasPrg "gpg";
         hasDirEnv = hasPrg "direnv";
+        hasSteam = hasSysPrg "steam";
         gpgHomeDir = hm.programs.gpg.gpgHomeDir;
 
 
@@ -130,7 +135,6 @@ let
         #(lib.optionalString true /*(lang "rust")*/ "${data}/cargo")
         #(lib.optionalString true /*(lang "rust")*/ "${data}/rustup")
 
-
         # Vscode
         (lib.optionalString (vscodePname != null) "${conf}/${vscodeConfigDir}")
         (lib.optionalString (vscodePname != null) "${cache}/mesa_shader_cache")
@@ -153,6 +157,9 @@ let
         (lib.optionalString (hasKDE ) "${data}/kwalletd")
         (lib.optionalString (hasKDE ) "${data}/kxmlgui5")
         (lib.optionalString (hasSDDM) "${data}/sddm")
+
+        # Steam
+        (lib.optionalString (hasSteam) "${data}/Steam")
 
         /**
         TODO: Figure out why this doesn't work
