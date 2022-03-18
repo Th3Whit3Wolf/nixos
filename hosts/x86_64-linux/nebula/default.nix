@@ -8,39 +8,47 @@ let
     (lib.filterAttrs (filename: filetype: filename != "root.age" && filetype == "regular") 
     (builtins.readDir ./secrets));
 in {
-  
-  imports = [ ./services.nix ./networking.nix ./hardware.nix ./users/doc.nix ];
-
   # Set your time zone.
-  time.timeZone = "Europe/London";
+  time.timeZone = "America/Denver";
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
 
   # Enable sound.
   sound.enable = true;
-  hardware.pulseaudio.enable = true;
-  nixpkgs.config.allowUnfree = true;
-  hardware.enableAllFirmware = true;
-  eyd = {
-      enable = true;
-      inherit persistentPath;
-      
-      users."doc" = {
-        directories = [
-          ".cache/gsconnect"
-          ".config/gsconnect"
-          ".config/chromium"
-          ".local/bin"
-          "Code"
-          "Gits"
-          "KVM"
-        ];
 
-        files = [
-          ".config/zoomus.conf"
-        ];
+  imports = [ ./services.nix ./networking.nix ./hardware.nix ./virtualization.nix ./users/doc.nix ];
+  
+  # Steam
+  nixpkgs.config = {
+    allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+      "steam"
+      "steam-original"
+      "steam-runtime"
+      "virtualboxExtpack"
+    ];
+    packageOverrides = pkgs: {
+      steam = pkgs.steam.override {
+        nativeOnly = true;
       };
     };
+  };
+
+  age = {
+    identityPaths = [
+      "/persist/etc/ssh/ssh_host_ed25519_key"
+    ] ++ userSSHKeys;
+    secrets.${passwd} = {
+      file = ./secrets/root.age;
+      #path = "/run/agenix/keys/${user}";
+    };
+  };
+
+
+
+  hardware = {
+    pulseaudio.enable = true;
+    enableAllFirmware = true;
+  };
 
   environment.systemPackages = with pkgs; [
     fup-repl
@@ -61,40 +69,57 @@ in {
     ragenix
   ];
 
-  programs.noisetorch.enable = true;
+  eyd = {
+    enable = true;
+    inherit persistentPath;
+    
+    users."doc" = {
+      directories = [
+        ".cache/gsconnect"
+        ".config/gsconnect"
+        ".config/chromium"
+        ".local/bin"
+        "Code"
+        "Gits"
+        "KVM"
+      ];
+
+      files = [
+        ".config/zoomus.conf"
+      ];
+    };
+  };
 
   harden.kernel.enable = true;
+
+  programs = {
+    noisetorch.enable = true;
+    steam.enable = true;
+  };
+
+  security.sudo = {
+    enable = true;
+    wheelNeedsPassword = false;
+  };
+
   system = {
     enable = true;
     kind = "desktop";
     cpu = "amd";
     gpu = "amd";
-  };
-  
-  age.identityPaths = [
-    "/persist/etc/ssh/ssh_host_ed25519_key"
-  ] ++ userSSHKeys;
-
-  # this is needed to get a bridge with DHCP enabled
-  virtualisation = {
-    libvirtd.enable = true;
-    docker.enable = true;
+    externMonitorName = "i2c3";
   };
 
-  age.secrets.${passwd} = {
-    file = ./secrets/root.age;
-    #path = "/run/agenix/keys/${user}";
-  };
-  users.groups.media = { };
-  users.groups.i2c = { };
-  users.users = { 
-    root = { 
-      passwordFile = config.age.secrets.${passwd}.path; 
-    }; 
-  };
-  security.sudo = {
-    enable = true;
-    wheelNeedsPassword = false;
+  users = {
+    groups = {
+      media = { };
+      i2c = { };
+    };
+    users = { 
+      root = { 
+        passwordFile = config.age.secrets.${passwd}.path; 
+      }; 
+    };
   };
 
   # This value determines the NixOS release from which the default
