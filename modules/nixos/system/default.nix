@@ -369,8 +369,9 @@ in {
                 (optionalString (hasLaptopModel ["Thinkpad_t440s" "Thinkpad_t440p" "Thinkpad_x230"] ) "tpm-rng")
                 (optionalString (hasLaptopModel "Old_Thinkpad") "tp_smapi" )
                 (optionalString (hasLaptopModel "Thinkpad_x13") "psmouse" )
+                
                 # Needed for using ddcutils on external monitor
-                (optionalMultiString hasExtMon ["i2c-dev" "i2c-piix4"] )
+                (optionalString hasExtMon "i2c-dev")
             ];
 
             kernel.sysctl = mkIf cfg.ssdBoot {
